@@ -1,0 +1,25 @@
+name: "Tests"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - "releases/*"
+
+jobs:
+  build:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          npm install
+          npm run test
+  test-action:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./
+        with:
+          workflow-xcode-versions-file: ./src/__tests__/workflow-xcode-versions.yml

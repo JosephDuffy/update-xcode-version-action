@@ -1,0 +1,47 @@
+{
+  "name": "xcode-transition-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.ts",
+  "scripts": {
+    "build": "tsc",
+    "pack": "ncc build src/main.ts",
+    "test": "jest",
+    "test:watch": "npm run test -- --watch",
+    "test:watchAll": "npm run test -- --watchAll",
+    "test:coverage": "npm run test -- --coverage",
+    "test:coverage:watch": "npm run test -- --coverage --watch",
+    "lint": "eslint . --ext .js,.ts",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write \"**/*.ts\" \"**/*.js\" \"**/*.yml\"",
+    "format:check": "prettier --check \"src/**/*.ts\" jest.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JosephDuffy/xcode-transition-action.git"
+  },
+  "keywords": [
+    "xcode",
+    "github-actions"
+  ],
+  "author": "Joseph Duffy",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/cache": "^0.2.1",
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^3.0.0",
+    "@types/jest": "^25.2.3",
+    "@types/node": "^14.0.11",
+    "@typescript-eslint/parser": "^3.1.0",
+    "@zeit/ncc": "^0.22.3",
+    "eslint": "^7.1.0",
+    "eslint-plugin-github": "^4.0.1",
+    "eslint-plugin-jest": "^23.13.2",
+    "jest": "^26.0.1",
+    "jest-circus": "^26.0.1",
+    "js-yaml": "^3.14.0",
+    "prettier": "^2.0.5",
+    "ts-jest": "^26.1.0",
+    "typescript": "^3.9.5"
+  }
+}
