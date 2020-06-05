@@ -73,13 +73,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = __webpack_require__(470);
 function run() {
-    var _a, _b;
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const workflowXcodeVersionsFile = core_1.getInput("workflow-xcode-versions-file");
             core_1.debug(workflowXcodeVersionsFile);
-            core_1.debug((_a = process.env["PATH"]) !== null && _a !== void 0 ? _a : "NO PATH");
-            core_1.debug((_b = process.env["GITHUB_WORKSPACE"]) !== null && _b !== void 0 ? _b : "NO WORKSPACE");
+            core_1.debug((_a = process.env["PWD"]) !== null && _a !== void 0 ? _a : "NO PWD");
+            core_1.debug((_b = process.env["PATH"]) !== null && _b !== void 0 ? _b : "NO PATH");
+            core_1.debug((_c = process.env["GITHUB_WORKSPACE"]) !== null && _c !== void 0 ? _c : "NO WORKSPACE");
         }
         catch (error) {
             core_1.setFailed(error.message);
