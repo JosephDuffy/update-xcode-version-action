@@ -12,6 +12,8 @@ module.exports = {
   ],
   rules: {
     "import/no-namespace": "off",
+    "require-await": "error",
+    "no-return-await": "warn",
   },
   env: {
     node: true,

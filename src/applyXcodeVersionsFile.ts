@@ -1,5 +1,5 @@
 import VersionResolver from "./VersionResolver"
-import applyWorkflowXcodeVersionsFile from "./applyWorkflowXcodeVersionsFile"
+import applyXcodeVersionsToWorkflowFiles from "./applyXcodeVersionsToWorkflowFiles"
 import * as path from "path"
 import * as fs from "fs"
 import * as yaml from "yaml"
@@ -20,7 +20,7 @@ export default async function applyXcodeVersionsFile(
   const xcodeVersionsFileDirectory = path.dirname(xcodeVersionsFilePath)
 
   const workflowXcodeVersions = xcodeVersions.workflows
-  await applyWorkflowXcodeVersionsFile(
+  await applyXcodeVersionsToWorkflowFiles(
     workflowXcodeVersions,
     xcodeVersionsFileDirectory,
     versionResolver

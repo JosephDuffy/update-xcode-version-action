@@ -27,6 +27,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
     }
 
     const version = versions[0]
+    core.debug(`Resolved ${versionSpecifier} to ${version}`)
     const path = version.path as string
     return path.split("Applications/Xcode_")[1].split(".app")[0]
   }

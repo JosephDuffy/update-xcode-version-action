@@ -1,8 +1,8 @@
 import { mocked } from "ts-jest/utils"
 import { readFileSync, writeFileSync, PathLike, BaseEncodingOptions } from "fs"
 import * as path from "path"
-import VersionResolver from "../VersionResolver"
 import applyXcodeVersionsFileModule from "../applyXcodeVersionsFile"
+import MockResolver from "./MockResolver"
 const fs = jest.requireActual("fs")
 jest.mock("fs")
 const mockedReadFileSync = mocked(readFileSync, true)
@@ -56,15 +56,3 @@ test("applyXcodeVersionsFile", async () => {
     "utf8"
   )
 })
-
-class MockResolver implements VersionResolver {
-  async resolveVersion(versionSpecifier: string): Promise<string> {
-    const versionsMap = {
-      latest: "11.3",
-      beta: "11.4-beta",
-      "last-major": "10.3",
-      "latst-minor": "11.2.1",
-    } as Record<string, string>
-    return versionsMap[versionSpecifier] ?? versionSpecifier
-  }
-}

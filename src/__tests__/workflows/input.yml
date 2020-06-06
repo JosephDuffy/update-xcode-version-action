@@ -33,7 +33,7 @@ jobs:
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
 
   last-minor:
-    name: Last major
+    name: Last minor
     runs-on: macos-latest
     strategy:
       fail-fast: false
@@ -62,7 +62,7 @@ jobs:
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
 
   latest:
-    name: Beta
+    name: Latest
     runs-on: macos-latest
     strategy:
       fail-fast: false

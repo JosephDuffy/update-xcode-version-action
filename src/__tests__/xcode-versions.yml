@@ -33,7 +33,8 @@ workflows:
         strategy:
           matrix:
             xcode:
-              - latest-and-beta
+              - latest
+              - beta
 
 projects:
   TestProject.xcproject:

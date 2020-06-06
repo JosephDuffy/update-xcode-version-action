@@ -10,8 +10,9 @@ jobs:
       matrix:
         xcode:
           - "10.3"
-          - "11.1"
           - 11.2.1
+          - "11.3"
+          - 11.4-beta
     steps:
       - uses: actions/checkout@v2
       - name: Select Xcode ${{ matrix.xcode }}
@@ -32,13 +33,13 @@ jobs:
       - name: Select Xcode ${{ matrix.xcode }}
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
   last-minor:
-    name: Last major
+    name: Last minor
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
         xcode:
-          - "11.1"
+          - 11.2.1
         platform:
           - iOS
           - tvOS
@@ -53,19 +54,19 @@ jobs:
       fail-fast: false
       matrix:
         xcode:
-          - 11.3-beta
+          - 11.4-beta
     steps:
       - uses: actions/checkout@v2
       - name: Select Xcode ${{ matrix.xcode }}
         run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
   latest:
-    name: Beta
+    name: Latest
     runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
         xcode:
-          - 11.2.1
+          - "11.3"
     steps:
       - uses: actions/checkout@v2
       - name: Select Xcode ${{ matrix.xcode }}
@@ -77,8 +78,8 @@ jobs:
       fail-fast: false
       matrix:
         xcode:
-          - 11.2.1
-          - 11.3-beta
+          - "11.3"
+          - 11.4-beta
     steps:
       - uses: actions/checkout@v2
       - name: Select Xcode ${{ matrix.xcode }}

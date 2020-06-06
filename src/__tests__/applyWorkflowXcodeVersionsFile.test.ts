@@ -2,9 +2,9 @@ import { mocked } from "ts-jest/utils"
 import { readFileSync, writeFileSync } from "fs"
 import * as yaml from "yaml"
 import path from "path"
-import VersionResolver from "../VersionResolver"
 import XcodeVersionsFile from "../XcodeVersionsFile"
-import applyWorkflowXcodeVersionsFileModule from "../applyWorkflowXcodeVersionsFile"
+import applyXcodeVersionsToWorkflowFiles from "../applyXcodeVersionsToWorkflowFiles"
+import MockResolver from "./MockResolver"
 const fs = jest.requireActual("fs")
 jest.mock("fs")
 const mockedReadFileSync = mocked(readFileSync, true)
@@ -19,7 +19,7 @@ const xcodeVersionsFilePath = "./src/__tests__/xcode-versions.yml"
 const inputFilePath = path.resolve("./src/__tests__/workflows/input.yml")
 const outputFilePath = "./src/__tests__/workflows/output.yml"
 
-test("applyWorkflowXcodeVersionsFile", async () => {
+test("applyXcodeVersionsToWorkflowFiles", async () => {
   const xcodeVersions = yaml.parse(
     fs.readFileSync(xcodeVersionsFilePath, "utf8")
   ) as XcodeVersionsFile
@@ -28,7 +28,7 @@ test("applyWorkflowXcodeVersionsFile", async () => {
 
   const workflowXcodeVersions = xcodeVersions.workflows
   const resolver = new MockResolver()
-  await applyWorkflowXcodeVersionsFileModule(
+  await applyXcodeVersionsToWorkflowFiles(
     workflowXcodeVersions,
     "./src/__tests__/",
     resolver
@@ -45,15 +45,3 @@ test("applyWorkflowXcodeVersionsFile", async () => {
     "utf8"
   )
 })
-
-class MockResolver implements VersionResolver {
-  async resolveVersion(versionSpecifier: string): Promise<string> {
-    const versionsMap = {
-      latest: "11.3",
-      beta: "11.4-beta",
-      "last-major": "10.3",
-      "latst-minor": "11.2.1",
-    } as Record<string, string>
-    return versionsMap[versionSpecifier] ?? versionSpecifier
-  }
-}
