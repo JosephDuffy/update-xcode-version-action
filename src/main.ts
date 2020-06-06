@@ -19,9 +19,19 @@ async function run(): Promise<void> {
       { required: true }
     )
 
+    core.debug(
+      `workflow-xcode-versions-file input: ${workflowXcodeVersionsFile}`
+    )
+
+    const xcodeSearchPathInput = core.getInput("xcode-search-path")
+
+    core.debug(
+      `xcode-search-path input: ${xcodeSearchPathInput ?? "not provided"}`
+    )
+
     const xcodeSearchPath = path.resolve(
       workspacePath,
-      core.getInput("xcode-search-path") ?? "/Applications"
+      xcodeSearchPathInput ?? "/Applications"
     )
 
     // The path to the file that describes which workflow files to update
