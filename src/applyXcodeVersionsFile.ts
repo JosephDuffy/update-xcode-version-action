@@ -5,7 +5,7 @@ import * as fs from "fs"
 import * as yaml from "yaml"
 import XcodeVersionsFile from "./XcodeVersionsFile"
 
-export default async function applyXcodeVersionsFile(
+export default function applyXcodeVersionsFile(
   xcodeVersionsFilePath: string,
   versionResolver: VersionResolver
 ): Promise<void> {
@@ -20,7 +20,7 @@ export default async function applyXcodeVersionsFile(
   const xcodeVersionsFileDirectory = path.dirname(xcodeVersionsFilePath)
 
   const workflowXcodeVersions = xcodeVersions.workflows
-  await applyXcodeVersionsToWorkflowFiles(
+  return applyXcodeVersionsToWorkflowFiles(
     workflowXcodeVersions,
     xcodeVersionsFileDirectory,
     versionResolver

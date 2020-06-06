@@ -31,7 +31,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
     const version = versions[0]
     core.debug(`Resolved ${versionSpecifier} to ${JSON.stringify(version)}`)
     const path = version.path
-    const xcodeSplit = path.split("Xcode_")
+    const xcodeSplit = path.split("/Xcode_")
 
     if (xcodeSplit.length < 2) {
       throw Error(`Path does not contain "Xcode_": ${path}`)
