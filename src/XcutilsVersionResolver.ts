@@ -2,6 +2,7 @@ import * as toolsCache from "@actions/tool-cache"
 import * as core from "@actions/core"
 import { exec, ExecOptions } from "@actions/exec"
 import VersionResolver from "./VersionResolver"
+import { format } from "util"
 
 export default class XcutilsVersionResolver implements VersionResolver {
   private hasDownloadedBinary = false
@@ -27,9 +28,21 @@ export default class XcutilsVersionResolver implements VersionResolver {
     }
 
     const version = versions[0]
-    core.debug(`Resolved ${versionSpecifier} to ${version}`)
+    core.debug(format(`Resolved ${versionSpecifier} to %o`, version))
     const path = version.path as string
-    return path.split("Applications/Xcode_")[1].split(".app")[0]
+    const xcodeSplit = path.split("Xcode_")
+
+    if (xcodeSplit.length < 2) {
+      throw Error(`Path does not contain "Xcode_": ${path}`)
+    }
+
+    const appSplit = xcodeSplit[1].split(".app")
+
+    if (appSplit.length < 2) {
+      throw Error(`Path does not contain ".app": ${path}`)
+    }
+
+    return appSplit[0]
   }
 
   private async run(args: string[]): Promise<string> {
