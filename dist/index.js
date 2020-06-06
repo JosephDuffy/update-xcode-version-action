@@ -11662,14 +11662,23 @@ class XcutilsVersionResolver {
                 "--output=json",
                 `--search-path=${this.xcodeSearchPath}`,
             ]);
+            core.debug(`Resolved versions for ${versionSpecifier}: ${json}`);
             const versions = JSON.parse(json);
             if (versions.length === 0) {
                 throw Error(`No versions found matching ${versionSpecifier}`);
             }
             const version = versions[0];
-            core.debug(`Resolved ${versionSpecifier} to ${version}`);
+            core.debug(`Resolved ${versionSpecifier} to ${JSON.stringify(version)}`);
             const path = version.path;
-            return path.split("Applications/Xcode_")[1].split(".app")[0];
+            const xcodeSplit = path.split("Xcode_");
+            if (xcodeSplit.length < 2) {
+                throw Error(`Path does not contain "Xcode_": ${path}`);
+            }
+            const appSplit = xcodeSplit[1].split(".app");
+            if (appSplit.length < 2) {
+                throw Error(`Path does not contain ".app": ${path}`);
+            }
+            return appSplit[0];
         });
     }
     run(args) {

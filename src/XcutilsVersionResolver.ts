@@ -2,6 +2,7 @@ import * as toolsCache from "@actions/tool-cache"
 import * as core from "@actions/core"
 import { exec, ExecOptions } from "@actions/exec"
 import VersionResolver from "./VersionResolver"
+import XcodeVersion from "./XcodeVersion"
 
 export default class XcutilsVersionResolver implements VersionResolver {
   private hasDownloadedBinary = false
@@ -21,7 +22,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
       `--search-path=${this.xcodeSearchPath}`,
     ])
     core.debug(`Resolved versions for ${versionSpecifier}: ${json}`)
-    const versions = JSON.parse(json)
+    const versions = JSON.parse(json) as XcodeVersion[]
 
     if (versions.length === 0) {
       throw Error(`No versions found matching ${versionSpecifier}`)
@@ -29,7 +30,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
 
     const version = versions[0]
     core.debug(`Resolved ${versionSpecifier} to ${JSON.stringify(version)}`)
-    const path = version.path as string
+    const path = version.path
     const xcodeSplit = path.split("Xcode_")
 
     if (xcodeSplit.length < 2) {
