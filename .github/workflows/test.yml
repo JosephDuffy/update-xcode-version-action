@@ -8,7 +8,8 @@ on:
       - "releases/*"
 
 jobs:
-  build:
+  test:
+    name: Run JS Tests
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,6 +17,7 @@ jobs:
           npm install
           npm run test
   test-action:
+    name: Test Action Run
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,7 +25,7 @@ jobs:
       - name: Run action against test data
         uses: ./
         with:
-          workflow-xcode-versions-file: ./src/__tests__/workflow-xcode-versions.yml
+          xcode-versions-file: ./src/__tests__/xcode-versions.yml
           xcode-search-path: ./src/__tests__/Xcodes
 
       - name: Validate run

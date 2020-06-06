@@ -1,11 +1,14 @@
-name: "Xcode Transition"
-description: "Update GitHub actions and/or project versions"
+name: "Update Xcode Version"
+description: "Update GitHub actions workflows and/or Xcode projects"
 inputs:
-  workflow-xcode-versions-file:
-    description: "The path to a .yml file that describes the keys of workflow files that should be updated."
+  xcode-versions-file:
+    description: "The path to a .yml file that describes which versions should be applied to which files."
   xcode-search-path:
     description: "The path to search for Xcode versions in."
     default: "/Applications"
 runs:
   using: "node12"
   main: "dist/index.js"
+branding:
+  icon: "arrow-up"
+  color: "orange"
