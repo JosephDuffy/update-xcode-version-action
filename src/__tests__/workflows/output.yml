@@ -1,0 +1,90 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  all_4_versions:
+    name: All 4 Versions
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["10.3", "11.2.1", "11.3", "11.4-beta"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  last-major:
+    name: Last major
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["10.3"]
+        platform: ["iOS", "tvOS"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  last-minor:
+    name: Last major
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["11.2.1"]
+        platform: ["iOS", "tvOS"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  beta:
+    name: Beta
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["11.4-beta"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  latest:
+    name: Beta
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["11.3"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  latest-and-beta:
+    name: Latest and Beta
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["11.3", "11.4-beta"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app

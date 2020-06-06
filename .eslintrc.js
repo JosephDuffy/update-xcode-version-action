@@ -9,6 +9,9 @@ module.exports = {
     "plugin:prettier/recommended",
     "plugin:github/recommended",
   ],
+  rules: {
+    "import/no-namespace": "off",
+  },
   env: {
     node: true,
     es6: true,

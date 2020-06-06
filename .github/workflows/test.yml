@@ -20,6 +20,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: ./
+      - name: Run action against test data
+        uses: ./
         with:
           workflow-xcode-versions-file: ./src/__tests__/workflow-xcode-versions.yml
+          xcode-search-path: ./src/__tests__/Xcodes
+
+      - name: Validate run
+        run: |
+          if ! cmp --silent ./src/__tests__/workflows/input.yml ./src/__tests__/workflows/output.yml; then
+            echo "Files do not match"
+            echo "./src/__tests__/workflows/input.yml:"
+            cat ./src/__tests__/workflows/input.yml
+            echo "./src/__tests__/workflows/output.yml:"
+            cat ./src/__tests__/workflows/output.yml
+            exit 1
+          fi
