@@ -13,8 +13,9 @@
     "test:coverage:watch": "npm run test -- --coverage --watch",
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
-    "format": "prettier --write \"**/*.ts\" \"**/*.js\" \"**/*.yml\"",
-    "format:check": "prettier --check \"src/**/*.ts\" jest.config.js"
+    "prettier": "prettier \"**/*.ts\" \"**/*.js\" \"**/*.yml\"",
+    "format": "npm run prettier -- --write",
+    "format:check": "npm run prettier -- --check"
   },
   "repository": {
     "type": "git",
