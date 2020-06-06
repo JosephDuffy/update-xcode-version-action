@@ -8,8 +8,7 @@ async function run(): Promise<void> {
     const workspacePath = process.env["GITHUB_WORKSPACE"]
 
     if (workspacePath === undefined) {
-      core.error("GITHUB_WORKSPACE environment variable not available")
-      return
+      throw new Error("GITHUB_WORKSPACE environment variable not available")
     }
 
     const xcodeVersionsFile = core.getInput("xcode-versions-file", {
