@@ -2915,6 +2915,7 @@ function run() {
             const xcodeSearchPathInput = core.getInput("xcode-search-path");
             core.debug(`xcode-search-path input: ${xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "not provided"}`);
             const xcodeSearchPath = path.resolve(workspacePath, xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "/Applications");
+            core.debug(`Resolved Xcode search path "${xcodeSearchPathInput}" against workspace "${workspacePath}": "${xcodeSearchPath}`);
             // The path to the file that describes which workflow and Xcode projects files to update
             const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile);
             const xcutilsVersionResolver = new XcutilsVersionResolver_1.default(xcodeSearchPath);

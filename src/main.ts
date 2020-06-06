@@ -29,6 +29,10 @@ async function run(): Promise<void> {
       xcodeSearchPathInput ?? "/Applications"
     )
 
+    core.debug(
+      `Resolved Xcode search path "${xcodeSearchPathInput}" against workspace "${workspacePath}": "${xcodeSearchPath}`
+    )
+
     // The path to the file that describes which workflow and Xcode projects files to update
     const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile)
     const xcutilsVersionResolver = new XcutilsVersionResolver(xcodeSearchPath)
