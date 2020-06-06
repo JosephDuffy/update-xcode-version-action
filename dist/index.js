@@ -11533,7 +11533,7 @@ class XcutilsVersionResolver {
                 versionSpecifier,
                 "--print-versions",
                 "--output=json",
-                `--search-path="${this.xcodeSearchPath}"`,
+                `--search-path=${this.xcodeSearchPath}`,
             ]);
             const versions = JSON.parse(json);
             if (versions.length === 0) {

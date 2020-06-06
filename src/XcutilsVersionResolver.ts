@@ -18,7 +18,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
       versionSpecifier,
       "--print-versions",
       "--output=json",
-      `--search-path="${this.xcodeSearchPath}"`,
+      `--search-path=${this.xcodeSearchPath}`,
     ])
     const versions = JSON.parse(json)
 
