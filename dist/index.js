@@ -2900,10 +2900,9 @@ const core = __webpack_require__(470);
 const path = __webpack_require__(622);
 const fs = __webpack_require__(747);
 const yaml = __webpack_require__(521);
-const setXcodeVersionsInWorkflow_1 = __webpack_require__(201);
 const XcutilsVersionResolver_1 = __webpack_require__(840);
+const applyWorkflowXcodeVersionsFile_1 = __webpack_require__(366);
 function run() {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const workspacePath = process.env["GITHUB_WORKSPACE"];
@@ -2911,26 +2910,18 @@ function run() {
                 core.error("GITHUB_WORKSPACE environment variable not available");
                 return;
             }
-            const workflowXcodeVersionsFile = core.getInput("workflow-xcode-versions-file");
-            if (workflowXcodeVersionsFile === undefined) {
-                core.error("GITHUB_WORKSPACE environment variable not available");
-                return;
-            }
-            const xcodeSearchPath = path.resolve(workspacePath, (_a = core.getInput("xcode-search-path")) !== null && _a !== void 0 ? _a : "/Applications");
+            const workflowXcodeVersionsFile = core.getInput("workflow-xcode-versions-file", { required: true });
+            core.debug(`workflow-xcode-versions-file input: ${workflowXcodeVersionsFile}`);
+            const xcodeSearchPathInput = core.getInput("xcode-search-path");
+            core.debug(`xcode-search-path input: ${xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "not provided"}`);
+            const xcodeSearchPath = path.resolve(workspacePath, xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "/Applications");
+            // The path to the file that describes which workflow files to update
             const workflowXcodeVersionsFilePath = path.resolve(workspacePath, workflowXcodeVersionsFile);
-            const workflowXcodeVersionsFileDirectory = path.dirname(workflowXcodeVersionsFilePath);
             const workflowXcodeVersionsFileContents = fs.readFileSync(workflowXcodeVersionsFilePath, "utf8");
             const workflowXcodeVersions = yaml.parse(workflowXcodeVersionsFileContents);
+            const workflowXcodeVersionsFileDirectory = path.resolve(path.dirname(workflowXcodeVersionsFilePath), "..");
             const xcutilsVersionResolver = new XcutilsVersionResolver_1.default(xcodeSearchPath);
-            for (const fileName in workflowXcodeVersions) {
-                const keyPaths = workflowXcodeVersions[fileName];
-                const workflowFilePath = path.resolve(workflowXcodeVersionsFileDirectory, fileName);
-                const workflowFileContents = fs.readFileSync(workflowFilePath, "utf8");
-                const workflow = yaml.parse(workflowFileContents);
-                const modifiedWorkflow = yield setXcodeVersionsInWorkflow_1.default(workflow, keyPaths, xcutilsVersionResolver);
-                const modifiedWorkflowYAML = yaml.stringify(modifiedWorkflow);
-                fs.writeFileSync(modifiedWorkflowYAML, "utf8");
-            }
+            yield applyWorkflowXcodeVersionsFile_1.default(workflowXcodeVersions, workflowXcodeVersionsFileDirectory, xcutilsVersionResolver);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -6140,6 +6131,43 @@ exports.toJSON = toJSON;
 /***/ (function(module) {
 
 module.exports = require("assert");
+
+/***/ }),
+
+/***/ 366:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const setXcodeVersionsInWorkflow_1 = __webpack_require__(201);
+const path = __webpack_require__(622);
+const fs = __webpack_require__(747);
+const yaml = __webpack_require__(521);
+function applyWorkflowXcodeVersionsFile(workflowXcodeVersions, rootPath, versionResolver) {
+    return __awaiter(this, void 0, void 0, function* () {
+        for (const fileName in workflowXcodeVersions) {
+            const keyPaths = workflowXcodeVersions[fileName];
+            const workflowFilePath = path.resolve(rootPath, fileName);
+            const workflowFileContents = fs.readFileSync(workflowFilePath, "utf8");
+            const workflow = yaml.parse(workflowFileContents);
+            const modifiedWorkflow = yield setXcodeVersionsInWorkflow_1.default(workflow, keyPaths, versionResolver);
+            const modifiedWorkflowYAML = yaml.stringify(modifiedWorkflow);
+            fs.writeFileSync(workflowFilePath, modifiedWorkflowYAML, "utf8");
+        }
+    });
+}
+exports.default = applyWorkflowXcodeVersionsFile;
+
 
 /***/ }),
 
