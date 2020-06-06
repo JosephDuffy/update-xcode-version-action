@@ -5,7 +5,6 @@ import applyXcodeVersionsFile from "../applyXcodeVersionsFile"
 import path from "path"
 import { run } from "../main"
 jest.mock("@actions/core")
-// jest.mock("../XcutilsVersionResolver")
 jest.mock("../XcutilsVersionResolver", () => {
   return jest.fn().mockImplementation((xcodeSearchPath) => {
     return {
@@ -39,8 +38,6 @@ test("valid inputs and environment", async () => {
   const xcodeVersionsFile = "path/to/xcode-versions-file.yml"
   const resolvedXcodeVersionsFile = path.resolve(workspace, xcodeVersionsFile)
   mockedGetInput.mockImplementation(
-    // eslint-disable-next @typescript-eslint/no-unused-vars
-    // eslint-disable-next-line no-unused-vars
     (name: string, options?: InputOptions): string => {
       switch (name) {
         case "xcode-versions-file":
@@ -76,8 +73,6 @@ test("no xcode-search-path", async () => {
   const xcodeVersionsFile = "path/to/xcode-versions-file.yml"
   const resolvedXcodeVersionsFile = path.resolve(workspace, xcodeVersionsFile)
   mockedGetInput.mockImplementation(
-    // eslint-disable-next @typescript-eslint/no-unused-vars
-    // eslint-disable-next-line no-unused-vars
     (name: string, options?: InputOptions): string => {
       switch (name) {
         case "xcode-versions-file":
@@ -122,8 +117,6 @@ test("applyXcodeVersionsFile throwing an error", async () => {
   const xcodeVersionsFile = "path/to/xcode-versions-file.yml"
   const resolvedXcodeVersionsFile = path.resolve(workspace, xcodeVersionsFile)
   mockedGetInput.mockImplementation(
-    // eslint-disable-next @typescript-eslint/no-unused-vars
-    // eslint-disable-next-line no-unused-vars
     (name: string, options?: InputOptions): string => {
       switch (name) {
         case "xcode-versions-file":
