@@ -2875,26 +2875,21 @@ function replaceXcodeVersionSpecifiers(record, versionResolver) {
         for (const key in record) {
             const value = record[key];
             if (Array.isArray(value)) {
-                try {
-                    const resolvedVersions = [];
-                    for (let index = 0; index < value.length; index++) {
-                        const versionSpecifier = value[index];
-                        try {
-                            core.debug(`Attempting to resolve ${versionSpecifier}`);
-                            const resolvedVersion = yield versionResolver.resolveVersion(versionSpecifier);
-                            core.debug(`Resolved ${versionSpecifier} as ${resolvedVersion}`);
-                            resolvedVersions[index] = resolvedVersion;
-                        }
-                        catch (error) {
-                            core.info(`Ignoring ${value} because of error resolving version: ${error}`);
-                            resolvedVersions[index] = versionSpecifier;
-                        }
+                const resolvedVersions = [];
+                for (let index = 0; index < value.length; index++) {
+                    const versionSpecifier = value[index];
+                    try {
+                        core.debug(`Attempting to resolve ${versionSpecifier}`);
+                        const resolvedVersion = yield versionResolver.resolveVersion(versionSpecifier);
+                        core.debug(`Resolved ${versionSpecifier} as ${resolvedVersion}`);
+                        resolvedVersions[index] = resolvedVersion;
                     }
-                    record[key] = resolvedVersions;
+                    catch (error) {
+                        core.info(`Ignoring ${value} because of error resolving version: ${error}`);
+                        resolvedVersions[index] = versionSpecifier;
+                    }
                 }
-                catch (error) {
-                    core.info(`Ignoring ${value} because of error resolving version: ${error}`);
-                }
+                record[key] = resolvedVersions;
             }
             else {
                 const resolvedValues = yield replaceXcodeVersionSpecifiers(value, versionResolver);
