@@ -13,8 +13,15 @@ jobs:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
+
       - run: npm install
-      - run: npm run test
+
+      - run: npm run test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
 
   test-action:
     name: Test Action Run
