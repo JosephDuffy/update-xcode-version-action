@@ -2910,8 +2910,10 @@ function run() {
                 core.error("GITHUB_WORKSPACE environment variable not available");
                 return;
             }
-            const workflowXcodeVersionsFile = core.getInput("workflow-xcode-versions-file", { required: true });
-            core.debug(`workflow-xcode-versions-file input: ${workflowXcodeVersionsFile}`);
+            const workflowXcodeVersionsFile = core.getInput("xcode-versions-file", {
+                required: true,
+            });
+            core.debug(`xcode-versions-file input: ${workflowXcodeVersionsFile}`);
             const xcodeSearchPathInput = core.getInput("xcode-search-path");
             core.debug(`xcode-search-path input: ${xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "not provided"}`);
             const xcodeSearchPath = path.resolve(workspacePath, xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "/Applications");

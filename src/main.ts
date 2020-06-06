@@ -14,14 +14,11 @@ async function run(): Promise<void> {
       return
     }
 
-    const workflowXcodeVersionsFile = core.getInput(
-      "workflow-xcode-versions-file",
-      { required: true }
-    )
+    const workflowXcodeVersionsFile = core.getInput("xcode-versions-file", {
+      required: true,
+    })
 
-    core.debug(
-      `workflow-xcode-versions-file input: ${workflowXcodeVersionsFile}`
-    )
+    core.debug(`xcode-versions-file input: ${workflowXcodeVersionsFile}`)
 
     const xcodeSearchPathInput = core.getInput("xcode-search-path")
 
