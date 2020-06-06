@@ -5,7 +5,8 @@
     "outDir": "./build",
     "rootDir": "./src",
     "strict": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "**/*.test.ts"]
 }

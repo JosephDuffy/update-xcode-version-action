@@ -1,38 +1,49 @@
-import * as fs from "fs"
-import applyWorkflowXcodeVersionsFile from "../applyWorkflowXcodeVersionsFile"
+import { mocked } from "ts-jest/utils"
+import { readFileSync, writeFileSync } from "fs"
 import * as yaml from "yaml"
+import path from "path"
 import VersionResolver from "../VersionResolver"
 import XcodeVersionsFile from "../XcodeVersionsFile"
-
-const inputFile = "./src/__tests__/workflows/input.yml"
-const expectedOutputFile = "./src/__tests__/workflows/output.yml"
-const inputFileBackup = "./src/__tests__/workflows/input-copy.yml"
-
-beforeEach(() => {
-  fs.copyFileSync(inputFile, inputFileBackup)
-})
+import applyWorkflowXcodeVersionsFileModule from "../applyWorkflowXcodeVersionsFile"
+const fs = jest.requireActual("fs")
+jest.mock("fs")
+const mockedReadFileSync = mocked(readFileSync, true)
+const mockedWriteFileSync = mocked(writeFileSync, true)
 
 afterEach(() => {
-  fs.copyFileSync(inputFileBackup, inputFile)
-  fs.unlinkSync(inputFileBackup)
+  mockedReadFileSync.mockReset()
+  mockedWriteFileSync.mockReset()
 })
+
+const xcodeVersionsFilePath = "./src/__tests__/xcode-versions.yml"
+const inputFilePath = path.resolve("./src/__tests__/workflows/input.yml")
+const outputFilePath = "./src/__tests__/workflows/output.yml"
 
 test("applyWorkflowXcodeVersionsFile", async () => {
   const xcodeVersions = yaml.parse(
-    fs.readFileSync("./src/__tests__/xcode-versions.yml", "utf8")
+    fs.readFileSync(xcodeVersionsFilePath, "utf8")
   ) as XcodeVersionsFile
+
+  mockedReadFileSync.mockReturnValue(fs.readFileSync(inputFilePath, "utf8"))
+
   const workflowXcodeVersions = xcodeVersions.workflows
   const resolver = new MockResolver()
-  await applyWorkflowXcodeVersionsFile(
+  await applyWorkflowXcodeVersionsFileModule(
     workflowXcodeVersions,
     "./src/__tests__/",
     resolver
   )
 
-  const resultContents = fs.readFileSync(inputFile, "utf8")
-  const expectedContents = fs.readFileSync(expectedOutputFile, "utf8")
+  const expectedContents = fs.readFileSync(outputFilePath, "utf8")
 
-  expect(resultContents).toEqual(expectedContents)
+  expect(mockedReadFileSync).toBeCalledTimes(1)
+  expect(mockedReadFileSync).toBeCalledWith(inputFilePath, "utf8")
+  expect(mockedWriteFileSync).toBeCalledTimes(1)
+  expect(mockedWriteFileSync).toBeCalledWith(
+    inputFilePath,
+    expectedContents,
+    "utf8"
+  )
 })
 
 class MockResolver implements VersionResolver {
