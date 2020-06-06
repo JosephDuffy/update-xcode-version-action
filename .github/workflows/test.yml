@@ -23,6 +23,14 @@ jobs:
         with:
           node-version: "${{ steps.node-version.outputs.node-version }}"
 
+      - name: Cache NPM
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-
+
       - run: npm install
 
       - run: npm run test:coverage
