@@ -4,6 +4,7 @@ import * as fs from "fs"
 import * as yaml from "yaml"
 import XcutilsVersionResolver from "./XcutilsVersionResolver"
 import applyWorkflowXcodeVersionsFile from "./applyWorkflowXcodeVersionsFile"
+import XcodeVersionsFile from "./XcodeVersionsFile"
 
 async function run(): Promise<void> {
   try {
@@ -37,7 +38,9 @@ async function run(): Promise<void> {
       xcodeVersionsFilePath,
       "utf8"
     )
-    const xcodeVersions = yaml.parse(xcodeVersionsFileContents)
+    const xcodeVersions = yaml.parse(
+      xcodeVersionsFileContents
+    ) as XcodeVersionsFile
 
     const xcodeVersionsFileDirectory = path.resolve(
       path.dirname(xcodeVersionsFilePath),
@@ -46,7 +49,7 @@ async function run(): Promise<void> {
 
     const xcutilsVersionResolver = new XcutilsVersionResolver(xcodeSearchPath)
 
-    const workflowXcodeVersions = xcodeVersions["workflow"]
+    const workflowXcodeVersions = xcodeVersions.workflows
     await applyWorkflowXcodeVersionsFile(
       workflowXcodeVersions,
       xcodeVersionsFileDirectory,

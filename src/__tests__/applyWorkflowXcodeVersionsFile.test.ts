@@ -2,6 +2,7 @@ import * as fs from "fs"
 import applyWorkflowXcodeVersionsFile from "../applyWorkflowXcodeVersionsFile"
 import * as yaml from "yaml"
 import VersionResolver from "../VersionResolver"
+import XcodeVersionsFile from "../XcodeVersionsFile"
 
 const inputFile = "./src/__tests__/workflows/input.yml"
 const expectedOutputFile = "./src/__tests__/workflows/output.yml"
@@ -19,8 +20,8 @@ afterEach(() => {
 test("applyWorkflowXcodeVersionsFile", async () => {
   const xcodeVersions = yaml.parse(
     fs.readFileSync("./src/__tests__/xcode-versions.yml", "utf8")
-  )
-  const workflowXcodeVersions = xcodeVersions["workflows"]
+  ) as XcodeVersionsFile
+  const workflowXcodeVersions = xcodeVersions.workflows
   const resolver = new MockResolver()
   await applyWorkflowXcodeVersionsFile(
     workflowXcodeVersions,

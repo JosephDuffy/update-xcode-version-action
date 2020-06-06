@@ -2923,7 +2923,7 @@ function run() {
             const xcodeVersions = yaml.parse(xcodeVersionsFileContents);
             const xcodeVersionsFileDirectory = path.resolve(path.dirname(xcodeVersionsFilePath), "..");
             const xcutilsVersionResolver = new XcutilsVersionResolver_1.default(xcodeSearchPath);
-            const workflowXcodeVersions = xcodeVersions["workflow"];
+            const workflowXcodeVersions = xcodeVersions.workflows;
             yield applyWorkflowXcodeVersionsFile_1.default(workflowXcodeVersions, xcodeVersionsFileDirectory, xcutilsVersionResolver);
         }
         catch (error) {
