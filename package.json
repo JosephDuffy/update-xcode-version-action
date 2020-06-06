@@ -1,5 +1,5 @@
 {
-  "name": "xcode-transition-action",
+  "name": "update-xcode-version-action",
   "version": "1.0.0",
   "description": "",
   "main": "src/main.ts",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JosephDuffy/xcode-transition-action.git"
+    "url": "git+https://github.com/JosephDuffy/update-xcode-version-action.git"
   },
   "keywords": [
     "xcode",
