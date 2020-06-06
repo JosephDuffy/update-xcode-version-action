@@ -2910,20 +2910,21 @@ function run() {
                 core.error("GITHUB_WORKSPACE environment variable not available");
                 return;
             }
-            const workflowXcodeVersionsFile = core.getInput("xcode-versions-file", {
+            const xcodeVersionsFile = core.getInput("xcode-versions-file", {
                 required: true,
             });
-            core.debug(`xcode-versions-file input: ${workflowXcodeVersionsFile}`);
+            core.debug(`xcode-versions-file input: ${xcodeVersionsFile}`);
             const xcodeSearchPathInput = core.getInput("xcode-search-path");
             core.debug(`xcode-search-path input: ${xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "not provided"}`);
             const xcodeSearchPath = path.resolve(workspacePath, xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "/Applications");
-            // The path to the file that describes which workflow files to update
-            const workflowXcodeVersionsFilePath = path.resolve(workspacePath, workflowXcodeVersionsFile);
-            const workflowXcodeVersionsFileContents = fs.readFileSync(workflowXcodeVersionsFilePath, "utf8");
-            const workflowXcodeVersions = yaml.parse(workflowXcodeVersionsFileContents);
-            const workflowXcodeVersionsFileDirectory = path.resolve(path.dirname(workflowXcodeVersionsFilePath), "..");
+            // The path to the file that describes which workflow and Xcode projects files to update
+            const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile);
+            const xcodeVersionsFileContents = fs.readFileSync(xcodeVersionsFilePath, "utf8");
+            const xcodeVersions = yaml.parse(xcodeVersionsFileContents);
+            const xcodeVersionsFileDirectory = path.resolve(path.dirname(xcodeVersionsFilePath), "..");
             const xcutilsVersionResolver = new XcutilsVersionResolver_1.default(xcodeSearchPath);
-            yield applyWorkflowXcodeVersionsFile_1.default(workflowXcodeVersions, workflowXcodeVersionsFileDirectory, xcutilsVersionResolver);
+            const workflowXcodeVersions = xcodeVersions["workflow"];
+            yield applyWorkflowXcodeVersionsFile_1.default(workflowXcodeVersions, xcodeVersionsFileDirectory, xcutilsVersionResolver);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -6155,11 +6156,13 @@ const setXcodeVersionsInWorkflow_1 = __webpack_require__(201);
 const path = __webpack_require__(622);
 const fs = __webpack_require__(747);
 const yaml = __webpack_require__(521);
+const core = __webpack_require__(470);
 function applyWorkflowXcodeVersionsFile(workflowXcodeVersions, rootPath, versionResolver) {
     return __awaiter(this, void 0, void 0, function* () {
         for (const fileName in workflowXcodeVersions) {
             const keyPaths = workflowXcodeVersions[fileName];
             const workflowFilePath = path.resolve(rootPath, fileName);
+            core.debug(`Resolved workflow file "${fileName}" against "${rootPath}": "${workflowFilePath}"`);
             const workflowFileContents = fs.readFileSync(workflowFilePath, "utf8");
             const workflow = yaml.parse(workflowFileContents);
             const modifiedWorkflow = yield setXcodeVersionsInWorkflow_1.default(workflow, keyPaths, versionResolver);

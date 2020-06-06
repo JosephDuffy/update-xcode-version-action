@@ -14,11 +14,11 @@ async function run(): Promise<void> {
       return
     }
 
-    const workflowXcodeVersionsFile = core.getInput("xcode-versions-file", {
+    const xcodeVersionsFile = core.getInput("xcode-versions-file", {
       required: true,
     })
 
-    core.debug(`xcode-versions-file input: ${workflowXcodeVersionsFile}`)
+    core.debug(`xcode-versions-file input: ${xcodeVersionsFile}`)
 
     const xcodeSearchPathInput = core.getInput("xcode-search-path")
 
@@ -31,27 +31,25 @@ async function run(): Promise<void> {
       xcodeSearchPathInput ?? "/Applications"
     )
 
-    // The path to the file that describes which workflow files to update
-    const workflowXcodeVersionsFilePath = path.resolve(
-      workspacePath,
-      workflowXcodeVersionsFile
-    )
-    const workflowXcodeVersionsFileContents = fs.readFileSync(
-      workflowXcodeVersionsFilePath,
+    // The path to the file that describes which workflow and Xcode projects files to update
+    const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile)
+    const xcodeVersionsFileContents = fs.readFileSync(
+      xcodeVersionsFilePath,
       "utf8"
     )
-    const workflowXcodeVersions = yaml.parse(workflowXcodeVersionsFileContents)
+    const xcodeVersions = yaml.parse(xcodeVersionsFileContents)
 
-    const workflowXcodeVersionsFileDirectory = path.resolve(
-      path.dirname(workflowXcodeVersionsFilePath),
+    const xcodeVersionsFileDirectory = path.resolve(
+      path.dirname(xcodeVersionsFilePath),
       ".."
     )
 
     const xcutilsVersionResolver = new XcutilsVersionResolver(xcodeSearchPath)
 
+    const workflowXcodeVersions = xcodeVersions["workflow"]
     await applyWorkflowXcodeVersionsFile(
       workflowXcodeVersions,
-      workflowXcodeVersionsFileDirectory,
+      xcodeVersionsFileDirectory,
       xcutilsVersionResolver
     )
   } catch (error) {

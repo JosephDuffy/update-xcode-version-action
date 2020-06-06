@@ -17,9 +17,10 @@ afterEach(() => {
 })
 
 test("applyWorkflowXcodeVersionsFile", async () => {
-  const workflowXcodeVersions = yaml.parse(
+  const xcodeVersions = yaml.parse(
     fs.readFileSync("./src/__tests__/xcode-versions.yml", "utf8")
   )
+  const workflowXcodeVersions = xcodeVersions["workflows"]
   const resolver = new MockResolver()
   await applyWorkflowXcodeVersionsFile(
     workflowXcodeVersions,
