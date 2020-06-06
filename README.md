@@ -1,6 +1,7 @@
 # update-xcode-version-action
 
-![Tests](https://github.com/JosephDuffy/xcode-transition-action/workflows/Tests/badge.svg)
+![Tests](https://github.com/JosephDuffy/update-xcode-version-action/workflows/Tests/badge.svg)
+[![codecov](https://codecov.io/gh/JosephDuffy/update-xcode-version-action/branch/master/graph/badge.svg)](https://codecov.io/gh/JosephDuffy/update-xcode-version-action)
 
 `update-xcode-version-action` is a GitHub actions that utilises [`xcutils`](https://github.com/JosephDuffy/xcutils) to automate the creation of pull requests when a new Xcode version is available (on GitHub actions).
 
