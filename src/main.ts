@@ -3,7 +3,7 @@ import * as path from "path"
 import XcutilsVersionResolver from "./XcutilsVersionResolver"
 import applyXcodeVersionsFile from "./applyXcodeVersionsFile"
 
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   try {
     const workspacePath = process.env["GITHUB_WORKSPACE"]
 
@@ -43,4 +43,7 @@ async function run(): Promise<void> {
   }
 }
 
-run()
+/* istanbul ignore next */
+if (process.env.NODE_ENV !== "test") {
+  run()
+}

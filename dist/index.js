@@ -2942,6 +2942,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.run = void 0;
 const core = __importStar(__webpack_require__(470));
 const path = __importStar(__webpack_require__(622));
 const XcutilsVersionResolver_1 = __importDefault(__webpack_require__(840));
@@ -2951,16 +2952,15 @@ function run() {
         try {
             const workspacePath = process.env["GITHUB_WORKSPACE"];
             if (workspacePath === undefined) {
-                core.error("GITHUB_WORKSPACE environment variable not available");
-                return;
+                throw new Error("GITHUB_WORKSPACE environment variable not available");
             }
             const xcodeVersionsFile = core.getInput("xcode-versions-file", {
                 required: true,
             });
             core.debug(`xcode-versions-file input: ${xcodeVersionsFile}`);
             const xcodeSearchPathInput = core.getInput("xcode-search-path");
-            core.debug(`xcode-search-path input: ${xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "not provided"}`);
-            const xcodeSearchPath = path.resolve(workspacePath, xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "/Applications");
+            core.debug(`xcode-search-path input: ${xcodeSearchPathInput.length > 0 ? xcodeSearchPathInput : "not provided"}`);
+            const xcodeSearchPath = path.resolve(workspacePath, xcodeSearchPathInput.length > 0 ? xcodeSearchPathInput : "/Applications");
             core.debug(`Resolved Xcode search path "${xcodeSearchPathInput}" against workspace "${workspacePath}": "${xcodeSearchPath}`);
             // The path to the file that describes which workflow and Xcode projects files to update
             const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile);
@@ -2972,7 +2972,11 @@ function run() {
         }
     });
 }
-run();
+exports.run = run;
+/* istanbul ignore next */
+if (process.env.NODE_ENV !== "test") {
+    run();
+}
 
 
 /***/ }),
