@@ -13,9 +13,9 @@ jobs:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          npm install
-          npm run test
+      - run: npm install
+      - run: npm run test
+
   test-action:
     name: Test Action Run
     runs-on: macOS-latest
