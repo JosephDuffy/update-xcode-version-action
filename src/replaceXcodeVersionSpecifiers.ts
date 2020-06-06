@@ -10,11 +10,24 @@ export default async function replaceXcodeVersionSpecifiers(
 
     if (Array.isArray(value)) {
       try {
-        const resolvedVersions = await Promise.all(
-          value.map((versionSpecifier) => {
-            return versionResolver.resolveVersion(versionSpecifier)
-          })
-        )
+        const resolvedVersions: string[] = []
+
+        for (let index = 0; index < value.length; index++) {
+          const versionSpecifier = value[index]
+          try {
+            core.debug(`Attempting to resolve ${versionSpecifier}`)
+            const resolvedVersion = await versionResolver.resolveVersion(
+              versionSpecifier
+            )
+            core.debug(`Resolved ${versionSpecifier} as ${resolvedVersion}`)
+            resolvedVersions[index] = resolvedVersion
+          } catch (error) {
+            core.info(
+              `Ignoring ${value} because of error resolving version: ${error}`
+            )
+            resolvedVersions[index] = versionSpecifier
+          }
+        }
         record[key] = resolvedVersions
       } catch (error) {
         core.info(

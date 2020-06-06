@@ -9,6 +9,7 @@ test("replaceXcodeVersionSpecifiers", async () => {
         "misc-key": true,
         "level-1-a-2-1": ["last-minor"],
         "unknown-specifiers-array": ["another-string"],
+        "specifiers-and-explicit-mixed": ["latest", "11.1"],
       },
     },
   }
@@ -19,6 +20,7 @@ test("replaceXcodeVersionSpecifiers", async () => {
         "misc-key": true,
         "level-1-a-2-1": ["11.2.1"],
         "unknown-specifiers-array": ["another-string"],
+        "specifiers-and-explicit-mixed": ["11.3", "11.1"],
       },
     },
   }

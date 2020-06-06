@@ -2876,9 +2876,20 @@ function replaceXcodeVersionSpecifiers(record, versionResolver) {
             const value = record[key];
             if (Array.isArray(value)) {
                 try {
-                    const resolvedVersions = yield Promise.all(value.map((versionSpecifier) => {
-                        return versionResolver.resolveVersion(versionSpecifier);
-                    }));
+                    const resolvedVersions = [];
+                    for (let index = 0; index < value.length; index++) {
+                        const versionSpecifier = value[index];
+                        try {
+                            core.debug(`Attempting to resolve ${versionSpecifier}`);
+                            const resolvedVersion = yield versionResolver.resolveVersion(versionSpecifier);
+                            core.debug(`Resolved ${versionSpecifier} as ${resolvedVersion}`);
+                            resolvedVersions[index] = resolvedVersion;
+                        }
+                        catch (error) {
+                            core.info(`Ignoring ${value} because of error resolving version: ${error}`);
+                            resolvedVersions[index] = versionSpecifier;
+                        }
+                    }
                     record[key] = resolvedVersions;
                 }
                 catch (error) {
