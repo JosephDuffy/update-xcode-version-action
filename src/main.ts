@@ -21,12 +21,14 @@ async function run(): Promise<void> {
     const xcodeSearchPathInput = core.getInput("xcode-search-path")
 
     core.debug(
-      `xcode-search-path input: ${xcodeSearchPathInput ?? "not provided"}`
+      `xcode-search-path input: ${
+        xcodeSearchPathInput.length > 0 ? xcodeSearchPathInput : "not provided"
+      }`
     )
 
     const xcodeSearchPath = path.resolve(
       workspacePath,
-      xcodeSearchPathInput ?? "/Applications"
+      xcodeSearchPathInput.length > 0 ? xcodeSearchPathInput : "/Applications"
     )
 
     core.debug(
