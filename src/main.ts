@@ -1,10 +1,7 @@
 import * as core from "@actions/core"
 import * as path from "path"
-import * as fs from "fs"
-import * as yaml from "yaml"
 import XcutilsVersionResolver from "./XcutilsVersionResolver"
-import applyWorkflowXcodeVersionsFile from "./applyWorkflowXcodeVersionsFile"
-import XcodeVersionsFile from "./XcodeVersionsFile"
+import applyXcodeVersionsFile from "./applyXcodeVersionsFile"
 
 async function run(): Promise<void> {
   try {
@@ -34,27 +31,8 @@ async function run(): Promise<void> {
 
     // The path to the file that describes which workflow and Xcode projects files to update
     const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile)
-    const xcodeVersionsFileContents = fs.readFileSync(
-      xcodeVersionsFilePath,
-      "utf8"
-    )
-    const xcodeVersions = yaml.parse(
-      xcodeVersionsFileContents
-    ) as XcodeVersionsFile
-
-    const xcodeVersionsFileDirectory = path.resolve(
-      path.dirname(xcodeVersionsFilePath),
-      ".."
-    )
-
     const xcutilsVersionResolver = new XcutilsVersionResolver(xcodeSearchPath)
-
-    const workflowXcodeVersions = xcodeVersions.workflows
-    await applyWorkflowXcodeVersionsFile(
-      workflowXcodeVersions,
-      xcodeVersionsFileDirectory,
-      xcutilsVersionResolver
-    )
+    await applyXcodeVersionsFile(xcodeVersionsFilePath, xcutilsVersionResolver)
   } catch (error) {
     core.setFailed(error.message)
   }

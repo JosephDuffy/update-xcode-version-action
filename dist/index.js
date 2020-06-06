@@ -2898,10 +2898,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __webpack_require__(470);
 const path = __webpack_require__(622);
-const fs = __webpack_require__(747);
-const yaml = __webpack_require__(521);
 const XcutilsVersionResolver_1 = __webpack_require__(840);
-const applyWorkflowXcodeVersionsFile_1 = __webpack_require__(366);
+const applyXcodeVersionsFile_1 = __webpack_require__(269);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -2919,12 +2917,8 @@ function run() {
             const xcodeSearchPath = path.resolve(workspacePath, xcodeSearchPathInput !== null && xcodeSearchPathInput !== void 0 ? xcodeSearchPathInput : "/Applications");
             // The path to the file that describes which workflow and Xcode projects files to update
             const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile);
-            const xcodeVersionsFileContents = fs.readFileSync(xcodeVersionsFilePath, "utf8");
-            const xcodeVersions = yaml.parse(xcodeVersionsFileContents);
-            const xcodeVersionsFileDirectory = path.resolve(path.dirname(xcodeVersionsFilePath), "..");
             const xcutilsVersionResolver = new XcutilsVersionResolver_1.default(xcodeSearchPath);
-            const workflowXcodeVersions = xcodeVersions.workflows;
-            yield applyWorkflowXcodeVersionsFile_1.default(workflowXcodeVersions, xcodeVersionsFileDirectory, xcutilsVersionResolver);
+            yield applyXcodeVersionsFile_1.default(xcodeVersionsFilePath, xcutilsVersionResolver);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -4004,6 +3998,39 @@ exports.default = setXcodeVersionsInWorkflow;
 /***/ (function(module) {
 
 module.exports = require("https");
+
+/***/ }),
+
+/***/ 269:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const applyWorkflowXcodeVersionsFile_1 = __webpack_require__(366);
+const path = __webpack_require__(622);
+const fs = __webpack_require__(747);
+const yaml = __webpack_require__(521);
+function applyXcodeVersionsFile(xcodeVersionsFilePath, versionResolver) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const xcodeVersionsFileContents = fs.readFileSync(xcodeVersionsFilePath, "utf8");
+        const xcodeVersions = yaml.parse(xcodeVersionsFileContents);
+        const xcodeVersionsFileDirectory = path.dirname(xcodeVersionsFilePath);
+        const workflowXcodeVersions = xcodeVersions.workflows;
+        yield applyWorkflowXcodeVersionsFile_1.default(workflowXcodeVersions, xcodeVersionsFileDirectory, versionResolver);
+    });
+}
+exports.default = applyXcodeVersionsFile;
+
 
 /***/ }),
 
