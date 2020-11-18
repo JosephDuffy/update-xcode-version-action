@@ -7,7 +7,7 @@ inputs:
     description: "The path to search for Xcode versions in."
     default: "/Applications"
 runs:
-  using: "node12"
+  using: "node14"
   main: "dist/index.js"
 branding:
   icon: "arrow-up"
