@@ -17,21 +17,18 @@ def setInDict(dataDict, mapList, value):
 
 
 parser = argparse.ArgumentParser(description="Apply Xcode version to YAML file")
-parser.add_argument("yaml_path", type=str, help="Path to YAML file to update")
 parser.add_argument("yaml_key", nargs="+", help="Key in YAML file to update")
 parser.add_argument("yaml_value", type=str, help="Value to set key to")
 
 args = parser.parse_args()
-
-path = pathlib.Path(args.yaml_path)
 
 key = args.yaml_key
 value = args.yaml_value
 
 yaml = YAML()
 yaml.preserve_quotes = True
-file = yaml.load(path)
+file = yaml.load(sys.stdin)
 
 setInDict(file, key, value)
 
-yaml.dump(file, path)
+yaml.dump(file, sys.stdout)

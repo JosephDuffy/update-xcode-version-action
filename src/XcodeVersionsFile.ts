@@ -1,8 +1,12 @@
 export default interface XcodeVersionsFile {
-  workflows: {
-    [filePath: string]: Record<string, unknown>
-  }
+  workflows: Workflows
   projects: {
     [project: string]: string
   }
 }
+
+export type Workflows = {
+  [filePath: string]: WorkflowNode
+}
+
+export type WorkflowNode = string | string[] | { [key: string]: WorkflowNode }

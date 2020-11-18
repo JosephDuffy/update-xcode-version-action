@@ -1,6 +1,11 @@
 import VersionResolver from "./VersionResolver"
 import * as core from "@actions/core"
 
+/**
+ * Recursively replace Xcode version specifiers with their resolved version.
+ * @param record
+ * @param versionResolver
+ */
 export default async function replaceXcodeVersionSpecifiers(
   record: Record<string, unknown>,
   versionResolver: VersionResolver

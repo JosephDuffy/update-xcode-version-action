@@ -1,8 +1,8 @@
 import { mocked } from "ts-jest/utils"
 import { readFileSync, writeFileSync, PathLike, BaseEncodingOptions } from "fs"
 import * as path from "path"
-import applyXcodeVersionsFileModule from "../applyXcodeVersionsFile"
-import MockResolver from "./MockResolver"
+import applyXcodeVersionsFile from "../applyXcodeVersionsFile"
+// import MockResolver from "./MockResolver"
 const fs = jest.requireActual("fs")
 jest.mock("fs")
 const mockedReadFileSync = mocked(readFileSync, true)
@@ -21,6 +21,10 @@ test("applyXcodeVersionsFile", async () => {
   const fullXcodeVersionsFilePath = path.resolve(xcodeVersionsFilePath)
   const fullInputFilePath = path.resolve(inputFilePath)
   const fullExpectedOutputFilePath = path.resolve(expectedOutputFilePath)
+
+  console.log("fullXcodeVersionsFilePath", fullXcodeVersionsFilePath)
+  console.log("fullInputFilePath", fullInputFilePath)
+  console.log("fullExpectedOutputFilePath", fullExpectedOutputFilePath)
 
   mockedReadFileSync.mockImplementation(
     (
@@ -41,14 +45,14 @@ test("applyXcodeVersionsFile", async () => {
     }
   )
 
-  const resolver = new MockResolver()
-  await applyXcodeVersionsFileModule(fullXcodeVersionsFilePath, resolver)
+  // const resolver = new MockResolver()
+  await applyXcodeVersionsFile(fullXcodeVersionsFilePath)
 
   const expectedContents = fs.readFileSync(fullExpectedOutputFilePath, "utf8")
 
   expect(mockedReadFileSync).toBeCalledTimes(2)
   expect(mockedReadFileSync).nthCalledWith(1, fullXcodeVersionsFilePath, "utf8")
-  expect(mockedReadFileSync).nthCalledWith(2, fullInputFilePath, "utf8")
+  expect(mockedReadFileSync).nthCalledWith(2, fullInputFilePath)
   expect(mockedWriteFileSync).toBeCalledTimes(1)
   expect(mockedWriteFileSync).toBeCalledWith(
     fullInputFilePath,
