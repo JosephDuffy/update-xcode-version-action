@@ -2,9 +2,11 @@ name: "Update Xcode Version"
 description: "Update GitHub actions workflows and/or Xcode projects"
 inputs:
   xcode-versions-file:
+    required: true
     description: "The path to a .yml file that describes which versions should be applied to which files."
     default: ".github/workflow-xcode-versions.yml"
   xcode-search-path:
+    required: true
     description: "The path to search for Xcode versions in."
     default: "/Applications"
 runs:
