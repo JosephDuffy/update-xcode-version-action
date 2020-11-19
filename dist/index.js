@@ -11465,6 +11465,12 @@ const child_process_1 = __webpack_require__(129);
 async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 versionResolver) {
+    await execute([
+        "pip3",
+        "install",
+        "-r",
+        path.resolve(__dirname, "../requirements.txt"),
+    ]);
     for (const fileName in workflows) {
         const rootNode = workflows[fileName];
         const workflowFilePath = path.resolve(rootPath, fileName);
@@ -11477,11 +11483,7 @@ versionResolver) {
         let modifiedFileContents = workflowFileContents;
         for (const update of updates) {
             try {
-                const output = await execute(modifiedFileContents, [
-                    scriptPath,
-                    ...update.keyPath,
-                    ...update.value,
-                ]);
+                const output = await execute([scriptPath, ...update.keyPath, ...update.value], modifiedFileContents);
                 modifiedFileContents = Buffer.from(output);
             }
             catch (error) {
@@ -11492,7 +11494,7 @@ versionResolver) {
     }
 }
 exports.default = applyXcodeVersionsToWorkflowFiles;
-function execute(input, params) {
+function execute(params, input) {
     return new Promise((resolve, reject) => {
         const child = child_process_1.exec(params.join(" "), (error, stdout) => {
             if (error) {
@@ -11502,7 +11504,7 @@ function execute(input, params) {
                 resolve(stdout);
             }
         });
-        if (child.stdin) {
+        if (input && child.stdin) {
             const stdinStream = new stream_1.Stream.Readable();
             stdinStream.push(input); // Add data to the internal queue for users of the stream to consume
             stdinStream.push(null); // Signals the end of the stream (EOF)
