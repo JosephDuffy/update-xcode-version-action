@@ -12,8 +12,8 @@ import XcodeVersionsFile from "./XcodeVersionsFile"
  * @param versionResolver An object that can be used to resolve versions in leaves.
  */
 export default function applyXcodeVersionsFile(
-  xcodeVersionsFilePath: string //,
-  // versionResolver: VersionResolver
+  xcodeVersionsFilePath: string,
+  versionResolver: VersionResolver
 ): Promise<void> {
   const xcodeVersionsFileContents = fs.readFileSync(
     xcodeVersionsFilePath,
@@ -28,11 +28,7 @@ export default function applyXcodeVersionsFile(
   const workflowXcodeVersions = xcodeVersions.workflows
   return applyXcodeVersionsToWorkflowFiles(
     workflowXcodeVersions,
-    xcodeVersionsFileDirectory //,
-    // versionResolver
+    xcodeVersionsFileDirectory,
+    versionResolver
   )
-
-  // return new Promise((resolve) => {
-  //   resolve()
-  // })
 }

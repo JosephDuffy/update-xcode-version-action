@@ -2,15 +2,14 @@ import VersionResolver from "./VersionResolver"
 import * as path from "path"
 import * as core from "@actions/core"
 import * as fs from "fs"
-import { exec as ghexec } from "@actions/exec"
 import { WorkflowNode, Workflows } from "./XcodeVersionsFile"
 import { Stream } from "stream"
 import { exec } from "child_process"
 
 export default async function applyXcodeVersionsToWorkflowFiles(
   workflows: Workflows,
-  rootPath: string //,
-  // versionResolver: VersionResolver
+  rootPath: string,
+  versionResolver: VersionResolver
 ): Promise<void> {
   for (const fileName in workflows) {
     const rootNode = workflows[fileName]
@@ -50,7 +49,6 @@ export default async function applyXcodeVersionsToWorkflowFiles(
 }
 
 function execute(input: Buffer, params: string[]): Promise<string> {
-  console.log("EXEC", params.join(" "))
   return new Promise((resolve, reject) => {
     const child = exec(params.join(" "), (error, stdout) => {
       if (error) {
