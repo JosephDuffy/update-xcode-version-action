@@ -15018,7 +15018,7 @@ class XcutilsVersionResolver {
         await this.downloadBinaryPromise;
     }
     async createDownloadBinaryPromise() {
-        const version = "v0.2.1";
+        const version = "v0.2.2";
         const zipURL = `https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`;
         core.debug(`Downloading xcutils archive from ${zipURL}`);
         const xcutilsZipPath = await toolsCache.downloadTool(zipURL);
