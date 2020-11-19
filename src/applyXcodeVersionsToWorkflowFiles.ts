@@ -9,7 +9,6 @@ import { exec } from "child_process"
 export default async function applyXcodeVersionsToWorkflowFiles(
   workflows: Workflows,
   rootPath: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   versionResolver: VersionResolver
 ): Promise<void> {
   await execute([
@@ -27,7 +26,7 @@ export default async function applyXcodeVersionsToWorkflowFiles(
     )
     const workflowFileContents = fs.readFileSync(workflowFilePath)
 
-    const updates = updatesFrom(rootNode)
+    const updates = await updatesFrom(rootNode, versionResolver)
 
     // "../src" is used to support being run from the `dist` directory
     const scriptPath = path.resolve(__dirname, "../src/applyXcodeVersion.py")
@@ -38,7 +37,7 @@ export default async function applyXcodeVersionsToWorkflowFiles(
     for (const update of updates) {
       try {
         const output = await execute(
-          [scriptPath, ...update.keyPath, ...update.value],
+          [scriptPath, ...update.keyPath, "--yaml_value", ...update.value],
           modifiedFileContents
         )
         modifiedFileContents = Buffer.from(output)
@@ -79,30 +78,37 @@ interface WorkflowUpdate {
   readonly value: string[]
 }
 
-function updatesFrom(
+export async function updatesFrom(
   node: WorkflowNode,
+  versionResolver: VersionResolver,
   keyPath: string[] = []
-): WorkflowUpdate[] {
+): Promise<WorkflowUpdate[]> {
   if (typeof node === "string") {
-    // TODO: Resolve
+    const resolvedVersion = await versionResolver.resolveVersion(node)
     return [
       {
         keyPath,
-        value: [node],
+        value: [resolvedVersion],
       },
     ]
   } else if (Array.isArray(node)) {
-    // TODO: Resolve
+    const resolvePromises = node.map((version) =>
+      versionResolver.resolveVersion(version)
+    )
+
+    const versions = await Promise.all(resolvePromises)
+
     return [
       {
         keyPath,
-        value: node,
+        value: versions,
       },
     ]
   } else {
-    return Object.keys(node).flatMap((key) => {
-      keyPath.push(key)
-      return updatesFrom(node[key], keyPath)
+    const promises = Object.keys(node).map((key) => {
+      return updatesFrom(node[key], versionResolver, [...keyPath, key])
     })
+    const result = await Promise.all(promises)
+    return result.flatMap((element) => element)
   }
 }

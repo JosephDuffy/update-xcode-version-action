@@ -6,6 +6,35 @@ workflows:
           matrix:
             xcode:
               - last-major
+              - last-minor
+              - latest
+              - beta
+      last-major:
+        strategy:
+          matrix:
+            xcode:
+              - last-major
+      last-minor:
+        strategy:
+          matrix:
+            xcode:
+              - last-minor
+      beta:
+        strategy:
+          matrix:
+            xcode:
+              - beta
+      latest:
+        strategy:
+          matrix:
+            xcode:
+              - latest
+      latest-and-beta:
+        strategy:
+          matrix:
+            xcode:
+              - latest
+              - beta
 
 projects:
   TestProject.xcproject:

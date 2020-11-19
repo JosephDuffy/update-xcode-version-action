@@ -13,13 +13,15 @@ def getFromDict(dataDict, mapList):
 
 
 def setInDict(dataDict, mapList, value):
-    getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value
+    if len(value) == 1:
+        getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value[0]
+    else:
+        getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value
 
 
 parser = argparse.ArgumentParser(description="Apply Xcode version to YAML file")
 parser.add_argument("yaml_key", nargs="+", help="Key in YAML file to update")
-# TODO: Accept an array
-parser.add_argument("yaml_value", type=str, help="Value to set key to")
+parser.add_argument("--yaml_value", nargs="+", help="Value to set key to")
 parser.add_argument(
     "--yaml_file",
     type=str,

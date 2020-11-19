@@ -2,8 +2,10 @@ import { mocked } from "ts-jest/utils"
 import { readFileSync, writeFileSync } from "fs"
 import * as yaml from "yaml"
 import path from "path"
-import XcodeVersionsFile from "../XcodeVersionsFile"
-import applyXcodeVersionsToWorkflowFiles from "../applyXcodeVersionsToWorkflowFiles"
+import XcodeVersionsFile, { WorkflowNode } from "../XcodeVersionsFile"
+import applyXcodeVersionsToWorkflowFiles, {
+  updatesFrom,
+} from "../applyXcodeVersionsToWorkflowFiles"
 import MockResolver from "./MockResolver"
 const fs = jest.requireActual("fs")
 jest.mock("fs")
@@ -44,4 +46,39 @@ test("applyXcodeVersionsToWorkflowFiles", async () => {
     expectedContents,
     "utf8"
   )
+})
+
+test("updatesFrom", async () => {
+  const input: WorkflowNode = {
+    jobs: {
+      "multiple-versions": {
+        strategy: {
+          matrix: {
+            xcode: ["last-major", "last-minor", "latest", "beta"],
+          },
+        },
+      },
+      "last-major": {
+        strategy: {
+          matrix: {
+            xcode: ["last-major"],
+          },
+        },
+      },
+    },
+  }
+  const resolver = new MockResolver()
+
+  const actualResult = await updatesFrom(input, resolver)
+
+  expect(actualResult).toEqual([
+    {
+      keyPath: ["jobs", "multiple-versions", "strategy", "matrix", "xcode"],
+      value: ["10.3", "11.2.1", "11.3", "11.4-beta"],
+    },
+    {
+      keyPath: ["jobs", "last-major", "strategy", "matrix", "xcode"],
+      value: ["10.3"],
+    },
+  ])
 })

@@ -1,3 +1,4 @@
+# prettier-ignore
 name: Tests
 
 on: [push]
@@ -5,12 +6,84 @@ on: [push]
 jobs:
   all_4_versions:
     # This comment should be preserved
-    name: "All 4 Versions" # As should the quotes
-    runs-on: "macos-latest"
+    name: "All 4 Versions" # These quotes should be preserved
+    runs-on: 'macos-latest' # As should these
     strategy:
       fail-fast: false
       matrix:
         xcode: ["10.3", "11.1", "11.2.1"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  last-major:
+    name: Last major
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["10.3"]
+        platform: ["iOS", "tvOS"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  last-minor:
+    name: Last minor
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["11.1"]
+        platform: ["iOS", "tvOS"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  beta:
+    name: Beta
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["11.3-beta"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  latest:
+    name: Latest
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["11.2.1"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select --switch /Applications/Xcode_${{ matrix.xcode }}.app
+
+  latest-and-beta:
+    name: Latest and Beta
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        xcode: ["11.2.1", "11.3-beta"]
 
     steps:
       - uses: actions/checkout@v2
