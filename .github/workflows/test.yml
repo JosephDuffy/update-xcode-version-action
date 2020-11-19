@@ -43,6 +43,7 @@ jobs:
   check-has-built:
     name: Check Has Been Built
     runs-on: macOS-latest
+    steps:
       - uses: actions/checkout@v2
 
       - name: Read .node-version
