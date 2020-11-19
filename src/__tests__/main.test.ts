@@ -64,7 +64,8 @@ test("valid inputs and environment", async () => {
     required: true,
   })
   expect(mockedGetInput).toBeCalledWith("xcode-search-path")
-  expect(mockedGetInput).toBeCalledTimes(2)
+  expect(mockedGetInput).toBeCalledWith("github-token")
+  expect(mockedGetInput).toBeCalledTimes(3)
 })
 
 test("no xcode-search-path", async () => {
@@ -97,7 +98,8 @@ test("no xcode-search-path", async () => {
     required: true,
   })
   expect(mockedGetInput).toBeCalledWith("xcode-search-path")
-  expect(mockedGetInput).toBeCalledTimes(2)
+  expect(mockedGetInput).toBeCalledWith("github-token")
+  expect(mockedGetInput).toBeCalledTimes(3)
 })
 
 test("missing GITHUB_WORKSPACE environment variable", async () => {
