@@ -45,16 +45,27 @@ export async function run(): Promise<void> {
 
     if (githubToken !== "") {
       core.debug("Have a GitHub token; creating pull request")
+
       await exec("git", [
         "checkout",
         "-b",
         "update-xcode-version-action/update-xcode-versions",
       ])
       core.debug("Created branch")
+
       await exec("git", ["add", "."])
-      core.debug("Stages all changes")
+      core.debug("Staged all changes")
+
       await exec("git", ["commit", "-m", "Update Xcode Versions"])
       core.debug("Created commit")
+
+      await exec("git", [
+        "push",
+        "--force",
+        "origin",
+        "update-xcode-version-action/update-xcode-versions",
+      ])
+      core.debug("Pushed branch")
 
       const octokit = github.getOctokit(githubToken)
       await octokit.pulls.create()

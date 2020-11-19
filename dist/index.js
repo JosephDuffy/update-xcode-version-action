@@ -3114,12 +3114,19 @@ async function run() {
             ]);
             core.debug("Created branch");
             await exec_1.exec("git", ["add", "."]);
-            core.debug("Stages all changes");
+            core.debug("Staged all changes");
             await exec_1.exec("git", ["commit", "-m", "Update Xcode Versions"]);
             core.debug("Created commit");
+            await exec_1.exec("git", [
+                "push",
+                "--force",
+                "origin",
+                "update-xcode-version-action/update-xcode-versions",
+            ]);
+            core.debug("Pushed branch");
             const octokit = github.getOctokit(githubToken);
             await octokit.pulls.create();
-            core.info("Created pull request");
+            core.debug("Created pull request");
         }
     }
     catch (error) {
