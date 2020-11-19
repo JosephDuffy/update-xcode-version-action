@@ -1,16 +1,19 @@
 import { mocked } from "ts-jest/utils"
 import XcutilsVersionResolver from "../XcutilsVersionResolver"
+import { addPath } from "@actions/core"
 import { downloadTool, extractZip } from "@actions/tool-cache"
 import { exec, ExecOptions } from "@actions/exec"
 import XcodeVersion from "../XcodeVersion"
 jest.mock("@actions/core")
 jest.mock("@actions/tool-cache")
 jest.mock("@actions/exec")
+const mockedAddPath = mocked(addPath, true)
 const mockedDownloadTool = mocked(downloadTool, true)
 const mockedExtractZip = mocked(extractZip, true)
 const mockedExec = mocked(exec, true)
 
 afterEach(() => {
+  mockedAddPath.mockReset()
   mockedDownloadTool.mockReset()
   mockedExtractZip.mockReset()
   mockedExec.mockReset()
@@ -22,6 +25,7 @@ test("resolving to a single version", async () => {
   const extractedDirectory = "/usr/local/bin"
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
+  mockedAddPath.mockReturnValue()
   const mockVersions: XcodeVersion[] = [
     {
       path: "/Applications/Xcode_11.5.app",
@@ -58,6 +62,7 @@ test("resolving to a single version", async () => {
     downloadedToolPath,
     extractedDirectory
   )
+  expect(mockedAddPath).toBeCalledWith(extractedDirectory)
   expect(mockedExec).toBeCalledWith(
     "xcutils",
     [
@@ -77,6 +82,7 @@ test("resolving to no versions", async () => {
   const extractedDirectory = "/usr/local/bin"
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
+  mockedAddPath.mockReturnValue()
 
   mockedExec.mockImplementation(
     async (
@@ -106,6 +112,7 @@ test("resolving to no versions", async () => {
     downloadedToolPath,
     extractedDirectory
   )
+  expect(mockedAddPath).toBeCalledWith(extractedDirectory)
   expect(mockedExec).toBeCalledWith(
     "xcutils",
     [
@@ -125,6 +132,7 @@ test("resolving multiple times", async () => {
   const extractedDirectory = "/usr/local/bin"
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
+  mockedAddPath.mockReturnValue()
   const mockVersions: XcodeVersion[] = [
     {
       path: "/Applications/Xcode_11.5.app",
@@ -162,6 +170,8 @@ test("resolving multiple times", async () => {
     downloadedToolPath,
     extractedDirectory
   )
+  expect(mockedAddPath).toBeCalledTimes(1)
+  expect(mockedAddPath).toBeCalledWith(extractedDirectory)
   expect(mockedExec).toBeCalledTimes(2)
   expect(mockedExec).toBeCalledWith(
     "xcutils",
@@ -182,6 +192,7 @@ test("resolving version without Xcode_ in path", async () => {
   const extractedDirectory = "/usr/local/bin"
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
+  mockedAddPath.mockReturnValue()
   const xcodePath = "/Applications/Xcode-11.5.app"
   const mockVersions: XcodeVersion[] = [
     {
@@ -220,6 +231,7 @@ test("resolving version without Xcode_ in path", async () => {
     downloadedToolPath,
     extractedDirectory
   )
+  expect(mockedAddPath).toBeCalledWith(extractedDirectory)
   expect(mockedExec).toBeCalledWith(
     "xcutils",
     [
@@ -239,6 +251,7 @@ test("resolving version without .app in path", async () => {
   const extractedDirectory = "/usr/local/bin"
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
+  mockedAddPath.mockReturnValue()
   const xcodePath = "/Applications/Xcode_11.5.xip"
   const mockVersions: XcodeVersion[] = [
     {
@@ -277,6 +290,7 @@ test("resolving version without .app in path", async () => {
     downloadedToolPath,
     extractedDirectory
   )
+  expect(mockedAddPath).toBeCalledWith(extractedDirectory)
   expect(mockedExec).toBeCalledWith(
     "xcutils",
     [
