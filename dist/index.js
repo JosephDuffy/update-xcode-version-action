@@ -11774,8 +11774,12 @@ class XcutilsVersionResolver {
     }
     async pullXcutils() {
         const version = "v0.2.0";
-        const xcutilsZipPath = await toolsCache.downloadTool(`https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`);
+        const zipURL = `https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`;
+        core.debug(`Downloading xcutils archive from ${zipURL}`);
+        const xcutilsZipPath = await toolsCache.downloadTool(zipURL);
+        core.debug("Extracting xcutils zip to /usr/local/bin");
         const xcutilsFolder = await toolsCache.extractZip(xcutilsZipPath, "/usr/local/bin");
+        core.debug(`Adding xcutils to path: ${xcutilsFolder}`);
         core.addPath(xcutilsFolder);
         this.hasDownloadedBinary = true;
     }
