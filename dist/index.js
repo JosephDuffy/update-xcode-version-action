@@ -3106,20 +3106,20 @@ async function run() {
         await applyXcodeVersionsFile_1.default(xcodeVersionsFilePath, xcutilsVersionResolver);
         const githubToken = core.getInput("github-token");
         if (githubToken !== "") {
-            core.info("Have a GitHub token; creating pull request");
+            core.debug("Have a GitHub token; creating pull request");
             await exec_1.exec("git", [
                 "checkout",
                 "-b",
                 "update-xcode-version-action/update-xcode-versions",
             ]);
-            core.info("Created branch");
+            core.debug("Created branch");
             await exec_1.exec("git", ["add", "."]);
-            core.info("Stages all changes");
+            core.debug("Stages all changes");
             await exec_1.exec("git", ["commit", "-m", "Update Xcode Versions"]);
-            core.info("Created commit");
+            core.debug("Created commit");
             const octokit = github.getOctokit(githubToken);
             await octokit.pulls.create();
-            core.info("Created octokit");
+            core.info("Created pull request");
         }
     }
     catch (error) {
