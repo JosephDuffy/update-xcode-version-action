@@ -83,3 +83,23 @@ jobs:
             cat ./src/__tests__/workflows/output.yml
             exit 1
           fi
+
+  test-python-script:
+    name: Test Python Script
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run python script
+        run: cat ./src/__tests__/workflows/input.yml | ./src/applyXcodeVersion.py jobs all_4_versions strategy matrix xcode last-major > ./src/__tests__/workflows/output.yml
+
+      - name: Validate run
+        run: |
+          if ! cmp --silent ./src/__tests__/workflows/input.yml ./src/__tests__/workflows/output.yml; then
+            echo "Files do not match"
+            echo "./src/__tests__/workflows/input.yml:"
+            cat ./src/__tests__/workflows/input.yml
+            echo "./src/__tests__/workflows/output.yml:"
+            cat ./src/__tests__/workflows/output.yml
+            exit 1
+          fi
