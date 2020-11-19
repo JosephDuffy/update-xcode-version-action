@@ -47,11 +47,14 @@ export async function run(): Promise<void> {
     if (githubToken !== "") {
       core.debug("Have a GitHub token; creating pull request")
 
-      const baseBranchNameStream = new Stream.Writable()
+      let baseBranchName = ""
       await exec("git", ["branch", "--show-current"], {
-        outStream: baseBranchNameStream,
+        listeners: {
+          stdout: (buffer) => {
+            baseBranchName += buffer.toString("utf8")
+          },
+        },
       })
-      const baseBranchName = Buffer.from(baseBranchNameStream).toString("utf8")
 
       await exec("git", [
         "checkout",

@@ -3086,7 +3086,6 @@ const github = __importStar(__webpack_require__(469));
 const exec_1 = __webpack_require__(986);
 const XcutilsVersionResolver_1 = __importDefault(__webpack_require__(840));
 const applyXcodeVersionsFile_1 = __importDefault(__webpack_require__(269));
-const stream_1 = __webpack_require__(794);
 async function run() {
     try {
         const workspacePath = process.env["GITHUB_WORKSPACE"];
@@ -3108,11 +3107,14 @@ async function run() {
         const githubToken = core.getInput("github-token");
         if (githubToken !== "") {
             core.debug("Have a GitHub token; creating pull request");
-            const baseBranchNameStream = new stream_1.Stream.Writable();
+            let baseBranchName = "";
             await exec_1.exec("git", ["branch", "--show-current"], {
-                outStream: baseBranchNameStream,
+                listeners: {
+                    stdout: (buffer) => {
+                        baseBranchName += buffer.toString("utf8");
+                    },
+                },
             });
-            const baseBranchName = Buffer.from(baseBranchNameStream).toString("utf8");
             await exec_1.exec("git", [
                 "checkout",
                 "-b",
