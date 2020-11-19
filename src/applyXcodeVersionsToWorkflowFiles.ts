@@ -22,7 +22,8 @@ export default async function applyXcodeVersionsToWorkflowFiles(
 
     const updates = updatesFrom(rootNode)
 
-    const scriptPath = path.resolve(__dirname, "applyXcodeVersion.py")
+    // "../src" is used to support being run from the `dist` directory
+    const scriptPath = path.resolve(__dirname, "../src/applyXcodeVersion.py")
 
     core.debug(`Running script at ${scriptPath}`)
 
