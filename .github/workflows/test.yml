@@ -24,7 +24,7 @@ jobs:
 
       - run: npm install
 
-      - run: pip3 install ruamel.yaml
+      - run: pip3 install -r requirements.txt
 
       - run: npm run test:coverage
 
@@ -60,7 +60,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: pip3 install ruamel.yaml
+      - run: pip3 install -r requirements.txt
 
       - name: Run action against test data
         uses: ./
@@ -85,7 +85,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: pip3 install ruamel.yaml
+      - run: pip3 install -r requirements.txt
 
       - name: Run python script
         run: ./src/applyXcodeVersion.py jobs all_4_versions strategy matrix xcode last-major --yaml_file ./src/__tests__/workflows/input.yml
