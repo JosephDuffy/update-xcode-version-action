@@ -97,7 +97,7 @@ jobs:
       - run: pip3 install ruamel.yaml
 
       - name: Run python script
-        run: cat ./src/__tests__/workflows/input.yml | ./src/applyXcodeVersion.py jobs all_4_versions strategy matrix xcode last-major > ./src/__tests__/workflows/output.yml
+        run: cat ./src/__tests__/workflows/input.yml | ./src/applyXcodeVersion.py jobs all_4_versions strategy matrix xcode last-major > ./src/__tests__/workflows/input.yml
 
       - name: Validate run
         run: |
