@@ -9,6 +9,8 @@ inputs:
     required: true
     description: "The path to search for Xcode versions in."
     default: "/Applications"
+  github-token:
+    description: "If provided will create a pull request with the changes"
 runs:
   using: "node12"
   main: "dist/index.js"

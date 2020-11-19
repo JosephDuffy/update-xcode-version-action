@@ -65,6 +65,7 @@ jobs:
         with:
           xcode-versions-file: ./src/__tests__/xcode-versions.yml
           xcode-search-path: ./src/__tests__/Xcodes
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate run
         run: |

@@ -1,5 +1,7 @@
 import * as core from "@actions/core"
 import * as path from "path"
+import * as github from "@actions/github"
+import { exec } from "@actions/exec"
 import XcutilsVersionResolver from "./XcutilsVersionResolver"
 import applyXcodeVersionsFile from "./applyXcodeVersionsFile"
 
@@ -38,6 +40,21 @@ export async function run(): Promise<void> {
     const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile)
     const xcutilsVersionResolver = new XcutilsVersionResolver(xcodeSearchPath)
     await applyXcodeVersionsFile(xcodeVersionsFilePath, xcutilsVersionResolver)
+
+    const githubToken = core.getInput("github-token")
+
+    if (githubToken !== "") {
+      await exec("git", [
+        "checkout",
+        "-b",
+        "update-xcode-version-action/update-xcode-versions",
+      ])
+      await exec("git", ["add", "."])
+      await exec("git", ["commit", "-m", "Update Xcode Versions"])
+
+      const octokit = github.getOctokit(githubToken)
+      await octokit.pulls.create()
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
