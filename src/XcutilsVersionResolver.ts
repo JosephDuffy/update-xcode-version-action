@@ -67,7 +67,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
   }
 
   private async pullXcutils() {
-    const version = "v0.1.2-rc2"
+    const version = "v0.2.0"
 
     const xcutilsZipPath = await toolsCache.downloadTool(
       `https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`
