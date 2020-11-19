@@ -4,6 +4,7 @@ import * as github from "@actions/github"
 import { exec } from "@actions/exec"
 import XcutilsVersionResolver from "./XcutilsVersionResolver"
 import applyXcodeVersionsFile from "./applyXcodeVersionsFile"
+import { Stream } from "stream"
 
 export async function run(): Promise<void> {
   try {
@@ -46,6 +47,12 @@ export async function run(): Promise<void> {
     if (githubToken !== "") {
       core.debug("Have a GitHub token; creating pull request")
 
+      const baseBranchNameStream = new Stream.Writable()
+      await exec("git", ["branch", "--show-current"], {
+        outStream: baseBranchNameStream,
+      })
+      const baseBranchName = Buffer.from(baseBranchNameStream).toString("utf8")
+
       await exec("git", [
         "checkout",
         "-b",
@@ -68,7 +75,12 @@ export async function run(): Promise<void> {
       core.debug("Pushed branch")
 
       const octokit = github.getOctokit(githubToken)
-      await octokit.pulls.create()
+      await octokit.pulls.create({
+        ...github.context.repo,
+        title: "Update Xcode Versions",
+        head: "update-xcode-version-action/update-xcode-versions",
+        base: baseBranchName,
+      })
 
       core.debug("Created pull request")
     }

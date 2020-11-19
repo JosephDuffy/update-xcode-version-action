@@ -3086,6 +3086,7 @@ const github = __importStar(__webpack_require__(469));
 const exec_1 = __webpack_require__(986);
 const XcutilsVersionResolver_1 = __importDefault(__webpack_require__(840));
 const applyXcodeVersionsFile_1 = __importDefault(__webpack_require__(269));
+const stream_1 = __webpack_require__(794);
 async function run() {
     try {
         const workspacePath = process.env["GITHUB_WORKSPACE"];
@@ -3107,6 +3108,11 @@ async function run() {
         const githubToken = core.getInput("github-token");
         if (githubToken !== "") {
             core.debug("Have a GitHub token; creating pull request");
+            const baseBranchNameStream = new stream_1.Stream.Writable();
+            await exec_1.exec("git", ["branch", "--show-current"], {
+                outStream: baseBranchNameStream,
+            });
+            const baseBranchName = Buffer.from(baseBranchNameStream).toString("utf8");
             await exec_1.exec("git", [
                 "checkout",
                 "-b",
@@ -3125,7 +3131,12 @@ async function run() {
             ]);
             core.debug("Pushed branch");
             const octokit = github.getOctokit(githubToken);
-            await octokit.pulls.create();
+            await octokit.pulls.create({
+                ...github.context.repo,
+                title: "Update Xcode Versions",
+                head: "update-xcode-version-action/update-xcode-versions",
+                base: baseBranchName,
+            });
             core.debug("Created pull request");
         }
     }
