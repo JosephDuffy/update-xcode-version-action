@@ -14,22 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Read .node-version
-        run: echo "##[set-output name=node-version;]$(cat .node-version)"
-        id: node-version
-
-      - name: Install node
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: "${{ steps.node-version.outputs.node-version }}"
-
       - name: Cache NPM
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-
+            ${{ runner.os }}-npm-
 
       - run: npm install
 
