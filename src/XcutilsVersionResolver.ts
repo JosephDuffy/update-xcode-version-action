@@ -76,7 +76,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
   }
 
   private async createDownloadBinaryPromise(): Promise<void> {
-    const version = "v0.2.0"
+    const version = "v0.2.1"
     const zipURL = `https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`
 
     core.debug(`Downloading xcutils archive from ${zipURL}`)
