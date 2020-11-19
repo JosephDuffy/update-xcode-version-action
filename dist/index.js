@@ -14980,9 +14980,7 @@ class XcutilsVersionResolver {
         return appSplit[0];
     }
     async run(args) {
-        if (!this.hasDownloadedBinary) {
-            await this.pullXcutils();
-        }
+        await this.pullXcutils();
         let output = "";
         const options = {
             listeners: {
@@ -14995,6 +14993,13 @@ class XcutilsVersionResolver {
         return output;
     }
     async pullXcutils() {
+        if (this.downloadBinaryPromise !== undefined) {
+            return this.downloadBinaryPromise;
+        }
+        this.downloadBinaryPromise = this.createDownloadBinaryPromise();
+        await this.downloadBinaryPromise;
+    }
+    async createDownloadBinaryPromise() {
         const version = "v0.2.0";
         const zipURL = `https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`;
         core.debug(`Downloading xcutils archive from ${zipURL}`);
@@ -15003,7 +15008,6 @@ class XcutilsVersionResolver {
         const xcutilsFolder = await toolsCache.extractZip(xcutilsZipPath, "/usr/local/bin");
         core.debug(`Adding xcutils to path: ${xcutilsFolder}`);
         core.addPath(xcutilsFolder);
-        this.hasDownloadedBinary = true;
     }
 }
 exports.default = XcutilsVersionResolver;

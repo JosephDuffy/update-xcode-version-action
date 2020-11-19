@@ -9,6 +9,8 @@ export default class XcutilsVersionResolver implements VersionResolver {
 
   private xcodeSearchPath: string
 
+  private downloadBinaryPromise?: Promise<void>
+
   constructor(xcodeSearchPath: string) {
     this.xcodeSearchPath = xcodeSearchPath
   }
@@ -47,9 +49,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
   }
 
   private async run(args: string[]): Promise<string> {
-    if (!this.hasDownloadedBinary) {
-      await this.pullXcutils()
-    }
+    await this.pullXcutils()
 
     let output = ""
 
@@ -66,7 +66,16 @@ export default class XcutilsVersionResolver implements VersionResolver {
     return output
   }
 
-  private async pullXcutils() {
+  private async pullXcutils(): Promise<void> {
+    if (this.downloadBinaryPromise !== undefined) {
+      return this.downloadBinaryPromise
+    }
+
+    this.downloadBinaryPromise = this.createDownloadBinaryPromise()
+    await this.downloadBinaryPromise
+  }
+
+  private async createDownloadBinaryPromise(): Promise<void> {
     const version = "v0.2.0"
     const zipURL = `https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`
 
@@ -84,6 +93,5 @@ export default class XcutilsVersionResolver implements VersionResolver {
     core.debug(`Adding xcutils to path: ${xcutilsFolder}`)
 
     core.addPath(xcutilsFolder)
-    this.hasDownloadedBinary = true
   }
 }
