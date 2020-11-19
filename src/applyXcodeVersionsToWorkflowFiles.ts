@@ -9,6 +9,7 @@ import { exec } from "child_process"
 export default async function applyXcodeVersionsToWorkflowFiles(
   workflows: Workflows,
   rootPath: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   versionResolver: VersionResolver
 ): Promise<void> {
   for (const fileName in workflows) {

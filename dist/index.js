@@ -11462,7 +11462,9 @@ const core = __importStar(__webpack_require__(470));
 const fs = __importStar(__webpack_require__(747));
 const stream_1 = __webpack_require__(794);
 const child_process_1 = __webpack_require__(129);
-async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionResolver) {
+async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+versionResolver) {
     for (const fileName in workflows) {
         const rootNode = workflows[fileName];
         const workflowFilePath = path.resolve(rootPath, fileName);

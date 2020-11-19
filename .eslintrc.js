@@ -11,6 +11,8 @@ module.exports = {
     "plugin:github/recommended",
   ],
   rules: {
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error",
     "import/no-namespace": "off",
     "require-await": "error",
     "no-return-await": "warn",
