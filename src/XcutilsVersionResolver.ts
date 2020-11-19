@@ -72,12 +72,8 @@ export default class XcutilsVersionResolver implements VersionResolver {
     const xcutilsZipPath = await toolsCache.downloadTool(
       `https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`
     )
-    const xcutilsFolder = await toolsCache.extractZip(
-      xcutilsZipPath,
-      "/usr/local/bin"
-    )
+    await toolsCache.extractZip(xcutilsZipPath, "/usr/local/bin")
 
-    core.addPath(xcutilsFolder)
     this.hasDownloadedBinary = true
   }
 }
