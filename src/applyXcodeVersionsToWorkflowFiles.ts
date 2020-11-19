@@ -30,7 +30,6 @@ export default async function applyXcodeVersionsToWorkflowFiles(
     for (const update of updates) {
       try {
         const output = await execute(modifiedFileContents, [
-          "python3",
           scriptPath,
           ...update.keyPath,
           ...update.value,
