@@ -3144,9 +3144,10 @@ async function run() {
             const pullRequests = await octokit.pulls.list({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
-                head: "update-xcode-version-action/update-xcode-versions",
+                head: `${github.context.repo.owner}:update-xcode-version-action/update-xcode-versions`,
                 state: "open",
             });
+            core.debug(`Found matching pull requests: ${JSON.stringify(pullRequests)}`);
             if (pullRequests.data.length > 0) {
                 const pullRequest = pullRequests.data[0];
                 core.info(`Pull request exists at ${pullRequest.html_url}`);
