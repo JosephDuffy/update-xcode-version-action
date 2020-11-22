@@ -77,6 +77,12 @@ export async function run(): Promise<void> {
       ])
       core.debug("Pushed branch")
 
+      core.debug(
+        `Creating a pull request from ${"update-xcode-version-action/update-xcode-versions"} to ${baseBranchName} with extras: ${
+          github.context.repo
+        }`
+      )
+
       const octokit = github.getOctokit(githubToken)
       await octokit.pulls.create({
         ...github.context.repo,
