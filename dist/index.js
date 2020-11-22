@@ -3145,7 +3145,7 @@ async function run() {
             const response = await octokit.pulls.create({
                 title: "Update Xcode Versions",
                 head: "update-xcode-version-action/update-xcode-versions",
-                base: baseBranchName,
+                base: `${github.context.repo.owner}:baseBranchName`,
                 owner: github.context.actor,
                 repo: github.context.repo.repo,
             });
