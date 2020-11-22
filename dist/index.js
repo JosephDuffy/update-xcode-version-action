@@ -3143,7 +3143,7 @@ async function run() {
             const createParameters = {
                 title: "Update Xcode Versions",
                 head: "update-xcode-version-action/update-xcode-versions",
-                base: `${github.context.repo.owner}:${baseBranchName}`,
+                base: baseBranchName,
                 owner: github.context.actor,
                 repo: github.context.repo.repo,
             };
