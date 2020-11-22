@@ -103,7 +103,7 @@ export async function run(): Promise<void> {
           title: "Update Xcode Versions",
           head: "update-xcode-version-action/update-xcode-versions",
           base: baseBranchName,
-          owner: github.context.actor,
+          owner: github.context.repo.owner,
           repo: github.context.repo.repo,
         }
 

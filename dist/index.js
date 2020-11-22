@@ -3156,7 +3156,7 @@ async function run() {
                     title: "Update Xcode Versions",
                     head: "update-xcode-version-action/update-xcode-versions",
                     base: baseBranchName,
-                    owner: github.context.actor,
+                    owner: github.context.repo.owner,
                     repo: github.context.repo.repo,
                 };
                 core.debug(`Attempting to create a pull request with parameters:${JSON.stringify(createParameters)}`);
