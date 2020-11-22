@@ -3119,7 +3119,7 @@ async function run() {
             await exec_1.exec("git", ["branch", "--show-current"], {
                 listeners: {
                     stdout: (buffer) => {
-                        baseBranchName += buffer.toString("utf8");
+                        baseBranchName += buffer.toString("utf8").replace(/\n$/, "");
                     },
                 },
             });
