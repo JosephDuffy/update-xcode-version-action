@@ -43,6 +43,7 @@ export default async function applyXcodeVersionsToWorkflowFiles(
         modifiedFileContents = Buffer.from(output)
       } catch (error) {
         core.error(error)
+        return
       }
     }
 
