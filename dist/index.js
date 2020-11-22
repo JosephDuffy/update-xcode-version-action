@@ -3140,17 +3140,29 @@ async function run() {
                 "update-xcode-version-action/update-xcode-versions",
             ]);
             core.debug("Pushed branch");
-            const createParameters = {
-                title: "Update Xcode Versions",
-                head: "update-xcode-version-action/update-xcode-versions",
-                base: baseBranchName,
-                owner: github.context.actor,
-                repo: github.context.repo.repo,
-            };
-            core.debug(`Attempting to create a pull request with parameters:${JSON.stringify(createParameters)}`);
             const octokit = github.getOctokit(githubToken);
-            const response = await octokit.pulls.create(createParameters);
-            core.info(`Create pull request at ${response.data.html_url}`);
+            const pullRequests = await octokit.pulls.list({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                head: "update-xcode-version-action/update-xcode-versions",
+                state: "open",
+            });
+            if (pullRequests.data.length > 0) {
+                const pullRequest = pullRequests.data[0];
+                core.info(`Pull request exists at ${pullRequest.html_url}`);
+            }
+            else {
+                const createParameters = {
+                    title: "Update Xcode Versions",
+                    head: "update-xcode-version-action/update-xcode-versions",
+                    base: baseBranchName,
+                    owner: github.context.actor,
+                    repo: github.context.repo.repo,
+                };
+                core.debug(`Attempting to create a pull request with parameters:${JSON.stringify(createParameters)}`);
+                const response = await octokit.pulls.create(createParameters);
+                core.info(`Create pull request at ${response.data.html_url}`);
+            }
         }
     }
     catch (error) {
