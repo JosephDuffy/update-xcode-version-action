@@ -34,6 +34,8 @@ key = args.yaml_key
 value = args.yaml_value
 
 yaml = YAML()
+# Do not modify long lines
+yaml.width = 9999999
 yaml.preserve_quotes = True
 yaml.indent(mapping=2, sequence=4, offset=2)
 
