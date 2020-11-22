@@ -79,7 +79,7 @@ export async function run(): Promise<void> {
 
       core.debug(
         `Creating a pull request from ${"update-xcode-version-action/update-xcode-versions"} to ${baseBranchName} with extras: ${JSON.stringify(
-          github.context.repo
+          github.context
         )}`
       )
 
