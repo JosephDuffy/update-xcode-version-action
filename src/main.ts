@@ -4,7 +4,6 @@ import * as github from "@actions/github"
 import { exec } from "@actions/exec"
 import XcutilsVersionResolver from "./XcutilsVersionResolver"
 import applyXcodeVersionsFile from "./applyXcodeVersionsFile"
-import { Stream } from "stream"
 
 export async function run(): Promise<void> {
   try {
