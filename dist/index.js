@@ -3107,6 +3107,14 @@ async function run() {
         const githubToken = core.getInput("github-token");
         if (githubToken !== "") {
             core.debug("Have a GitHub token; creating pull request");
+            core.debug("Setting up committer details");
+            await exec_1.exec("git", [
+                "config",
+                "--local",
+                "user.email",
+                "action@github.com",
+            ]);
+            await exec_1.exec("git", ["config", "--local", "user.name", "GitHub Action"]);
             let baseBranchName = "";
             await exec_1.exec("git", ["branch", "--show-current"], {
                 listeners: {
@@ -3134,14 +3142,14 @@ async function run() {
             core.debug("Pushed branch");
             core.debug(`Creating a pull request from ${"update-xcode-version-action/update-xcode-versions"} to ${baseBranchName} with extras: ${JSON.stringify(github.context)}`);
             const octokit = github.getOctokit(githubToken);
-            await octokit.pulls.create({
+            const response = await octokit.pulls.create({
                 title: "Update Xcode Versions",
                 head: "update-xcode-version-action/update-xcode-versions",
                 base: baseBranchName,
                 owner: github.context.actor,
                 repo: github.context.repo.repo,
             });
-            core.debug("Created pull request");
+            core.info(`Create pull request at ${response.data.html_url}`);
         }
     }
     catch (error) {

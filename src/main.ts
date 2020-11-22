@@ -47,6 +47,16 @@ export async function run(): Promise<void> {
     if (githubToken !== "") {
       core.debug("Have a GitHub token; creating pull request")
 
+      core.debug("Setting up committer details")
+
+      await exec("git", [
+        "config",
+        "--local",
+        "user.email",
+        "action@github.com",
+      ])
+      await exec("git", ["config", "--local", "user.name", "GitHub Action"])
+
       let baseBranchName = ""
       await exec("git", ["branch", "--show-current"], {
         listeners: {
@@ -84,7 +94,7 @@ export async function run(): Promise<void> {
       )
 
       const octokit = github.getOctokit(githubToken)
-      await octokit.pulls.create({
+      const response = await octokit.pulls.create({
         title: "Update Xcode Versions",
         head: "update-xcode-version-action/update-xcode-versions",
         base: baseBranchName,
@@ -92,7 +102,7 @@ export async function run(): Promise<void> {
         repo: github.context.repo.repo,
       })
 
-      core.debug("Created pull request")
+      core.info(`Create pull request at ${response.data.html_url}`)
     }
   } catch (error) {
     core.setFailed(error.message)
