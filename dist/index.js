@@ -3149,8 +3149,8 @@ async function run() {
                 head: `${github.context.repo.owner}:update-xcode-version-action/update-xcode-versions`,
                 state: "open",
             });
-            core.debug(`Found matching pull requests: ${JSON.stringify(pullRequests)}`);
             if (pullRequests.data.length > 0) {
+                core.debug(`Found matching pull requests: ${JSON.stringify(pullRequests)}`);
                 const pullRequest = pullRequests.data[0];
                 if (pullRequest.base.ref !== baseBranchName) {
                     core.info(`An existing pull requests exists at ${pullRequest.html_url} with base branch ${pullRequest.base.ref}, but the workflow was run from ${baseBranchName}.`);
@@ -14705,6 +14705,7 @@ async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionRes
 exports.default = applyXcodeVersionsToWorkflowFiles;
 function execute(params, input) {
     return new Promise((resolve, reject) => {
+        core.debug(`Spawning process: ${params.join(" ")}`);
         const child = child_process_1.exec(params.join(" "), (error, stdout) => {
             if (error) {
                 reject(error);

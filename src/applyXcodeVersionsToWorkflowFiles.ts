@@ -56,6 +56,7 @@ export default async function applyXcodeVersionsToWorkflowFiles(
 
 function execute(params: string[], input?: Buffer): Promise<string> {
   return new Promise((resolve, reject) => {
+    core.debug(`Spawning process: ${params.join(" ")}`)
     const child = exec(params.join(" "), (error, stdout) => {
       if (error) {
         reject(error)

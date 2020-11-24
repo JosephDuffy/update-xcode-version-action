@@ -97,11 +97,11 @@ export async function run(): Promise<void> {
         state: "open",
       })
 
-      core.debug(
-        `Found matching pull requests: ${JSON.stringify(pullRequests)}`
-      )
-
       if (pullRequests.data.length > 0) {
+        core.debug(
+          `Found matching pull requests: ${JSON.stringify(pullRequests)}`
+        )
+
         const pullRequest = pullRequests.data[0]
 
         if (pullRequest.base.ref !== baseBranchName) {
