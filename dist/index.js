@@ -3107,7 +3107,9 @@ async function run() {
         const githubToken = core.getInput("github-token");
         if (githubToken !== "") {
             core.debug("Have a GitHub token; creating pull request");
-            const gitDiffExitCode = await exec_1.exec("git", ["diff", "--exit-code"]);
+            const gitDiffExitCode = await exec_1.exec("git", ["diff", "--exit-code"], {
+                ignoreReturnCode: true,
+            });
             if (gitDiffExitCode === 0) {
                 core.info("No change were applied");
                 return;
