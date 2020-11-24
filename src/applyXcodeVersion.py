@@ -47,6 +47,14 @@ if args.yaml_file:
 else:
     file = yaml.load(sys.stdin)
 
+existing_value = getFromDict(file, key[:-1])[key[-1]]
+print("Existing key", key, "has value", existing_value)
+
+if existing_value == value:
+    print("Key has not changed")
+
+print("Setting key", key, "to", value)
+
 setInDict(file, key, value)
 
 if yaml_file:
