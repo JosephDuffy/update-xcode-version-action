@@ -74,11 +74,11 @@ test("updatesFrom", async () => {
   expect(actualResult).toEqual([
     {
       keyPath: ["jobs", "multiple-versions", "strategy", "matrix", "xcode"],
-      value: ["10.3", "11.2.1", "11.3", "11.4-beta"],
+      value: ["11.7", "12.1", "12.2", "12.3"],
     },
     {
       keyPath: ["jobs", "last-major", "strategy", "matrix", "xcode"],
-      value: ["10.3"],
+      value: ["11.7"],
     },
   ])
 })
