@@ -1,18 +1,19 @@
 import VersionResolver from "./VersionResolver"
 import * as path from "path"
 import * as core from "@actions/core"
+import { exec } from "@actions/exec"
 import * as fs from "fs"
 import { WorkflowNode, Workflows } from "./XcodeVersionsFile"
 import { Stream } from "stream"
-import { exec } from "child_process"
 
 export default async function applyXcodeVersionsToWorkflowFiles(
   workflows: Workflows,
   rootPath: string,
   versionResolver: VersionResolver
 ): Promise<void> {
-  await execute([
-    "pip3",
+  core.debug("Installing pip3 requirements")
+
+  await exec("pip3", [
     "install",
     "-r",
     path.resolve(__dirname, "../requirements.txt"),
@@ -31,16 +32,32 @@ export default async function applyXcodeVersionsToWorkflowFiles(
     // "../src" is used to support being run from the `dist` directory
     const scriptPath = path.resolve(__dirname, "../src/applyXcodeVersion.py")
 
-    core.debug(`Running script at ${scriptPath}`)
-
     let modifiedFileContents = workflowFileContents
     for (const update of updates) {
       try {
-        const output = await execute(
-          [scriptPath, ...update.keyPath, "--yaml_value", ...update.value],
-          modifiedFileContents
+        const outStream = new Stream.Writable()
+
+        core.debug(
+          `Running script at ${scriptPath} with parameters ${[
+            ...update.keyPath,
+            "--yaml_value",
+            ...update.value,
+          ]}`
         )
-        modifiedFileContents = Buffer.from(output)
+        core.debug(
+          `Passing file contents: ${modifiedFileContents.toString("utf8")}`
+        )
+
+        await exec(
+          scriptPath,
+          [...update.keyPath, "--yaml_value", ...update.value],
+          {
+            input: modifiedFileContents,
+            outStream,
+          }
+        )
+
+        modifiedFileContents = Buffer.from(outStream)
       } catch (error) {
         core.error(error)
       }
@@ -52,26 +69,6 @@ export default async function applyXcodeVersionsToWorkflowFiles(
       "utf8"
     )
   }
-}
-
-function execute(params: string[], input?: Buffer): Promise<string> {
-  return new Promise((resolve, reject) => {
-    core.debug(`Spawning process: ${params.join(" ")}`)
-    const child = exec(params.join(" "), (error, stdout) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve(stdout)
-      }
-    })
-
-    if (input && child.stdin) {
-      const stdinStream = new Stream.Readable()
-      stdinStream.push(input) // Add data to the internal queue for users of the stream to consume
-      stdinStream.push(null) // Signals the end of the stream (EOF)
-      stdinStream.pipe(child.stdin)
-    }
-  })
 }
 
 interface WorkflowUpdate {

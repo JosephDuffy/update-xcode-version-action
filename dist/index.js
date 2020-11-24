@@ -14670,12 +14670,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatesFrom = void 0;
 const path = __importStar(__webpack_require__(622));
 const core = __importStar(__webpack_require__(470));
+const exec_1 = __webpack_require__(986);
 const fs = __importStar(__webpack_require__(747));
 const stream_1 = __webpack_require__(794);
-const child_process_1 = __webpack_require__(129);
 async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionResolver) {
-    await execute([
-        "pip3",
+    core.debug("Installing pip3 requirements");
+    await exec_1.exec("pip3", [
         "install",
         "-r",
         path.resolve(__dirname, "../requirements.txt"),
@@ -14688,12 +14688,21 @@ async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionRes
         const updates = await updatesFrom(rootNode, versionResolver);
         // "../src" is used to support being run from the `dist` directory
         const scriptPath = path.resolve(__dirname, "../src/applyXcodeVersion.py");
-        core.debug(`Running script at ${scriptPath}`);
         let modifiedFileContents = workflowFileContents;
         for (const update of updates) {
             try {
-                const output = await execute([scriptPath, ...update.keyPath, "--yaml_value", ...update.value], modifiedFileContents);
-                modifiedFileContents = Buffer.from(output);
+                const outStream = new stream_1.Stream.Writable();
+                core.debug(`Running script at ${scriptPath} with parameters ${[
+                    ...update.keyPath,
+                    "--yaml_value",
+                    ...update.value,
+                ]}`);
+                core.debug(`Passing file contents: ${modifiedFileContents.toString("utf8")}`);
+                await exec_1.exec(scriptPath, [...update.keyPath, "--yaml_value", ...update.value], {
+                    input: modifiedFileContents,
+                    outStream,
+                });
+                modifiedFileContents = Buffer.from(outStream);
             }
             catch (error) {
                 core.error(error);
@@ -14703,25 +14712,6 @@ async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionRes
     }
 }
 exports.default = applyXcodeVersionsToWorkflowFiles;
-function execute(params, input) {
-    return new Promise((resolve, reject) => {
-        core.debug(`Spawning process: ${params.join(" ")}`);
-        const child = child_process_1.exec(params.join(" "), (error, stdout) => {
-            if (error) {
-                reject(error);
-            }
-            else {
-                resolve(stdout);
-            }
-        });
-        if (input && child.stdin) {
-            const stdinStream = new stream_1.Stream.Readable();
-            stdinStream.push(input); // Add data to the internal queue for users of the stream to consume
-            stdinStream.push(null); // Signals the end of the stream (EOF)
-            stdinStream.pipe(child.stdin);
-        }
-    });
-}
 async function updatesFrom(node, versionResolver, keyPath = []) {
     if (typeof node === "string") {
         const resolvedVersion = await versionResolver.resolveVersion(node);
