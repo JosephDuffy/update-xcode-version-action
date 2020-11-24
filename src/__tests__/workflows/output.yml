@@ -12,10 +12,10 @@ jobs:
       fail-fast: false
       matrix:
         xcode:
-          - '10.3'
-          - 11.2.1
-          - '11.3'
-          - 11.4-beta
+          - '11.7'
+          - '12.1'
+          - '12.2'
+          - '12.3'
 
     steps:
       - uses: actions/checkout@v2
@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        xcode: '10.3'
+        xcode: '11.7'
         platform: ["iOS", "tvOS"]
 
     steps:
@@ -47,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        xcode: 11.2.1
+        xcode: '12.1'
         platform: ["iOS", "tvOS"]
 
     steps:
@@ -62,7 +62,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        xcode: 11.4-beta
+        xcode: '12.3'
 
     steps:
       - uses: actions/checkout@v2
@@ -76,7 +76,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        xcode: '11.3'
+        xcode: '12.2'
 
     steps:
       - uses: actions/checkout@v2
@@ -91,8 +91,8 @@ jobs:
       fail-fast: false
       matrix:
         xcode:
-          - '11.3'
-          - 11.4-beta
+          - '12.2'
+          - '12.3'
 
     steps:
       - uses: actions/checkout@v2
