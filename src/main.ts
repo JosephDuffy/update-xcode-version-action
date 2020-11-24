@@ -46,7 +46,13 @@ export async function run(): Promise<void> {
     if (githubToken !== "") {
       core.debug("Have a GitHub token; creating pull request")
 
-      const gitDiffExitCode = await exec("git", ["diff", "--exit-code"])
+      const gitDiffExitCode = await exec("git", ["diff", "--exit-code"], {
+        listeners: {
+          stdout: (data) => {
+            core.debug(data.toString())
+          },
+        },
+      })
 
       if (gitDiffExitCode !== 0) {
         core.info("No change were applied")
