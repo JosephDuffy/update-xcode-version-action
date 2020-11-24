@@ -34,15 +34,6 @@ export default async function applyXcodeVersionsToWorkflowFiles(
     let modifiedFileContents = workflowFileContents.toString()
     for (const update of updates) {
       try {
-        core.debug(
-          `Running script at ${scriptPath} with parameters ${[
-            ...update.keyPath,
-            "--yaml_value",
-            ...update.value,
-          ]}`
-        )
-        core.debug(`Passing file contents: ${modifiedFileContents}`)
-
         const { stdout } = await execa(
           scriptPath,
           [...update.keyPath, "--yaml_value", ...update.value],
@@ -51,7 +42,7 @@ export default async function applyXcodeVersionsToWorkflowFiles(
           }
         )
 
-        modifiedFileContents = stdout
+        modifiedFileContents = `${stdout}\n`
       } catch (error) {
         core.error(error)
       }
