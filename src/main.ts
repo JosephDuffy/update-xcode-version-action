@@ -65,28 +65,30 @@ export async function run(): Promise<void> {
         },
       })
 
-      await exec("git", [
-        "checkout",
-        "-b",
-        "update-xcode-version-action/update-xcode-versions",
-      ])
-      core.debug("Created branch")
-
-      await exec("git", ["add", "."])
-      core.debug("Staged all changes")
-
-      await exec("git", ["commit", "-m", "Update Xcode Versions"])
-      core.debug("Created commit")
-
-      await exec("git", [
-        "push",
-        "--force",
-        "origin",
-        "update-xcode-version-action/update-xcode-versions",
-      ])
-      core.debug("Pushed branch")
-
       const octokit = github.getOctokit(githubToken)
+
+      const commitAndPushChanges = async () => {
+        await exec("git", [
+          "checkout",
+          "-b",
+          "update-xcode-version-action/update-xcode-versions",
+        ])
+        core.debug("Created branch")
+
+        await exec("git", ["add", "."])
+        core.debug("Staged all changes")
+
+        await exec("git", ["commit", "-m", "Update Xcode Versions"])
+        core.debug("Created commit")
+
+        await exec("git", [
+          "push",
+          "--force",
+          "origin",
+          "update-xcode-version-action/update-xcode-versions",
+        ])
+        core.debug("Pushed branch")
+      }
 
       const pullRequests = await octokit.pulls.list({
         owner: github.context.repo.owner,
@@ -101,8 +103,24 @@ export async function run(): Promise<void> {
 
       if (pullRequests.data.length > 0) {
         const pullRequest = pullRequests.data[0]
-        core.info(`Pull request exists at ${pullRequest.html_url}`)
+
+        if (pullRequest.base.ref !== baseBranchName) {
+          core.info(
+            `An existing pull requests exists at ${pullRequest.html_url} with base branch ${pullRequest.base.ref}, but the workflow was run from ${baseBranchName}.`
+          )
+          core.info(
+            "The action will not create a new PR or update the existing branch. Delete the PR and run again to recreate."
+          )
+        } else {
+          core.info(
+            `Pull request exists at ${pullRequest.html_url}. Pushing changes.`
+          )
+
+          await commitAndPushChanges()
+        }
       } else {
+        await commitAndPushChanges()
+
         const createParameters = {
           title: "Update Xcode Versions",
           head: "update-xcode-version-action/update-xcode-versions",
