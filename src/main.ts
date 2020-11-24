@@ -1,7 +1,7 @@
 import * as core from "@actions/core"
 import * as path from "path"
 import * as github from "@actions/github"
-import { exec } from "@actions/exec"
+import execa from "execa"
 import XcutilsVersionResolver from "./XcutilsVersionResolver"
 import applyXcodeVersionsFile from "./applyXcodeVersionsFile"
 
@@ -48,40 +48,36 @@ export async function run(): Promise<void> {
 
       core.debug("Setting up committer details")
 
-      await exec("git", [
+      await execa("git", [
         "config",
         "--local",
         "user.email",
         "action@github.com",
       ])
-      await exec("git", ["config", "--local", "user.name", "GitHub Action"])
+      await execa("git", ["config", "--local", "user.name", "GitHub Action"])
 
-      let baseBranchName = ""
-      await exec("git", ["branch", "--show-current"], {
-        listeners: {
-          stdout: (buffer) => {
-            baseBranchName += buffer.toString("utf8").replace(/\n$/, "")
-          },
-        },
-      })
+      const { stdout: baseBranchName } = await execa("git", [
+        "branch",
+        "--show-current",
+      ])
 
       const octokit = github.getOctokit(githubToken)
 
       const commitAndPushChanges = async () => {
-        await exec("git", [
+        await execa("git", [
           "checkout",
           "-b",
           "update-xcode-version-action/update-xcode-versions",
         ])
         core.debug("Created branch")
 
-        await exec("git", ["add", "."])
+        await execa("git", ["add", "."])
         core.debug("Staged all changes")
 
-        await exec("git", ["commit", "-m", "Update Xcode Versions"])
+        await execa("git", ["commit", "-m", "Update Xcode Versions"])
         core.debug("Created commit")
 
-        await exec("git", [
+        await execa("git", [
           "push",
           "--force",
           "origin",

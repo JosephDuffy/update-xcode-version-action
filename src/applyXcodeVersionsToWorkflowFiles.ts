@@ -1,10 +1,9 @@
 import VersionResolver from "./VersionResolver"
 import * as path from "path"
 import * as core from "@actions/core"
-import { exec } from "@actions/exec"
+import execa from "execa"
 import * as fs from "fs"
 import { WorkflowNode, Workflows } from "./XcodeVersionsFile"
-import { Stream } from "stream"
 
 export default async function applyXcodeVersionsToWorkflowFiles(
   workflows: Workflows,
@@ -13,7 +12,7 @@ export default async function applyXcodeVersionsToWorkflowFiles(
 ): Promise<void> {
   core.debug("Installing pip3 requirements")
 
-  await exec("pip3", [
+  await execa("pip3", [
     "install",
     "-r",
     path.resolve(__dirname, "../requirements.txt"),
@@ -32,11 +31,9 @@ export default async function applyXcodeVersionsToWorkflowFiles(
     // "../src" is used to support being run from the `dist` directory
     const scriptPath = path.resolve(__dirname, "../src/applyXcodeVersion.py")
 
-    let modifiedFileContents = workflowFileContents
+    let modifiedFileContents = workflowFileContents.toString()
     for (const update of updates) {
       try {
-        const outStream = new Stream.Writable()
-
         core.debug(
           `Running script at ${scriptPath} with parameters ${[
             ...update.keyPath,
@@ -44,30 +41,23 @@ export default async function applyXcodeVersionsToWorkflowFiles(
             ...update.value,
           ]}`
         )
-        core.debug(
-          `Passing file contents: ${modifiedFileContents.toString("utf8")}`
-        )
+        core.debug(`Passing file contents: ${modifiedFileContents}`)
 
-        await exec(
+        const { stdout } = await execa(
           scriptPath,
           [...update.keyPath, "--yaml_value", ...update.value],
           {
             input: modifiedFileContents,
-            outStream,
           }
         )
 
-        modifiedFileContents = Buffer.from(outStream)
+        modifiedFileContents = stdout
       } catch (error) {
         core.error(error)
       }
     }
 
-    fs.writeFileSync(
-      workflowFilePath,
-      modifiedFileContents.toString("utf8"),
-      "utf8"
-    )
+    fs.writeFileSync(workflowFilePath, modifiedFileContents, "utf8")
   }
 }
 

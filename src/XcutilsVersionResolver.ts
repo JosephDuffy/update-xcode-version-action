@@ -1,6 +1,6 @@
 import * as toolsCache from "@actions/tool-cache"
 import * as core from "@actions/core"
-import { exec, ExecOptions } from "@actions/exec"
+import execa from "execa"
 import VersionResolver from "./VersionResolver"
 import XcodeVersion from "./XcodeVersion"
 
@@ -51,19 +51,9 @@ export default class XcutilsVersionResolver implements VersionResolver {
   private async run(args: string[]): Promise<string> {
     await this.pullXcutils()
 
-    let output = ""
+    const { stdout } = await execa("xcutils", args)
 
-    const options: ExecOptions = {
-      listeners: {
-        stdout: (data: Buffer) => {
-          output += data.toString()
-        },
-      },
-    }
-
-    await exec("xcutils", args, options)
-
-    return output
+    return stdout
   }
 
   private async pullXcutils(): Promise<void> {
