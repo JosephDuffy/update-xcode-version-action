@@ -5,16 +5,16 @@
 	<key>BuildAliasOf</key>
 	<string>IDEFrameworks</string>
 	<key>BuildVersion</key>
-	<string>10</string>
+	<string>23</string>
 	<key>CFBundleShortVersionString</key>
-	<string>11.3</string>
+	<string>12.2</string>
 	<key>CFBundleVersion</key>
-	<string>15712</string>
+	<string>17535</string>
 	<key>ProductBuildVersion</key>
-	<string>11C29</string>
+	<string>12B45b</string>
 	<key>ProjectName</key>
 	<string>IDEFrameworks</string>
 	<key>SourceVersion</key>
-	<string>15712000000000000</string>
+	<string>17535000000000000</string>
 </dict>
 </plist>
