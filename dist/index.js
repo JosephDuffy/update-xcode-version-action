@@ -3044,6 +3044,65 @@ exports.getApiBaseUrl = getApiBaseUrl;
 
 /***/ }),
 
+/***/ 128:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(__webpack_require__(747));
+const https_1 = __importDefault(__webpack_require__(211));
+function generateBadge(badgePath, versions, versionResolver) {
+    return new Promise((resolve, reject) => {
+        const resolvedVersionPromises = versions.map((v) => versionResolver.resolveVersion(v));
+        Promise.all(resolvedVersionPromises)
+            // eslint-disable-next-line github/no-then
+            .then((resolvedVersions) => {
+            const displayResolvedVersions = encodeURI(resolvedVersions.filter((v) => v !== undefined).join(" | "));
+            const badgeURL = `https://img.shields.io/badge/Xcode-${displayResolvedVersions}-success`;
+            https_1.default
+                .get(badgeURL, (response) => {
+                const badgeWriteStream = fs.createWriteStream(badgePath);
+                response.pipe(badgeWriteStream);
+                resolve();
+            })
+                .on("error", (error) => {
+                reject(error);
+            });
+        })
+            // eslint-disable-next-line github/no-then
+            .catch((error) => {
+            reject(error);
+        });
+    });
+}
+exports.default = generateBadge;
+
+
+/***/ }),
+
 /***/ 129:
 /***/ (function(module) {
 
@@ -3086,6 +3145,7 @@ const github = __importStar(__webpack_require__(469));
 const exec_1 = __webpack_require__(986);
 const XcutilsVersionResolver_1 = __importDefault(__webpack_require__(840));
 const applyXcodeVersionsFile_1 = __importDefault(__webpack_require__(269));
+const generateBadge_1 = __importDefault(__webpack_require__(128));
 async function run() {
     try {
         const workspacePath = process.env["GITHUB_WORKSPACE"];
@@ -3104,6 +3164,16 @@ async function run() {
         const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile);
         const xcutilsVersionResolver = new XcutilsVersionResolver_1.default(xcodeSearchPath);
         await applyXcodeVersionsFile_1.default(xcodeVersionsFilePath, xcutilsVersionResolver);
+        const xcodeVersionBadgePath = core.getInput("xcode-version-badge-path");
+        if (xcodeVersionBadgePath !== "") {
+            const xcodeVersionBadgeVersionsString = core.getInput("xcode-version-badge-versions");
+            const xcodeVersionBadgeVersions = xcodeVersionBadgeVersionsString
+                .split(",")
+                .map((s) => s.trim());
+            if (xcodeVersionBadgeVersions.length > 0) {
+                await generateBadge_1.default(path.resolve(workspacePath, xcodeVersionBadgePath), xcodeVersionBadgeVersions, xcutilsVersionResolver);
+            }
+        }
         const githubToken = core.getInput("github-token");
         if (githubToken !== "") {
             core.debug("Have a GitHub token; creating pull request");

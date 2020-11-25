@@ -44,6 +44,8 @@ test("valid inputs and environment", async () => {
           return xcodeVersionsFile
         case "xcode-search-path":
           return "/Users/tester/Applications"
+        case "xcode-version-badge-path":
+          return ""
         default:
           throw new Error(`Unknown input requested: ${name}`)
       }
@@ -64,8 +66,9 @@ test("valid inputs and environment", async () => {
     required: true,
   })
   expect(mockedGetInput).toBeCalledWith("xcode-search-path")
+  expect(mockedGetInput).toBeCalledWith("xcode-version-badge-path")
   expect(mockedGetInput).toBeCalledWith("github-token")
-  expect(mockedGetInput).toBeCalledTimes(3)
+  expect(mockedGetInput).toBeCalledTimes(4)
 })
 
 test("no xcode-search-path", async () => {
@@ -79,6 +82,8 @@ test("no xcode-search-path", async () => {
         case "xcode-versions-file":
           return xcodeVersionsFile
         case "xcode-search-path":
+          return ""
+        case "xcode-version-badge-path":
           return ""
         default:
           throw new Error(`Unknown input requested: ${name}`)
@@ -98,8 +103,9 @@ test("no xcode-search-path", async () => {
     required: true,
   })
   expect(mockedGetInput).toBeCalledWith("xcode-search-path")
+  expect(mockedGetInput).toBeCalledWith("xcode-version-badge-path")
   expect(mockedGetInput).toBeCalledWith("github-token")
-  expect(mockedGetInput).toBeCalledTimes(3)
+  expect(mockedGetInput).toBeCalledTimes(4)
 })
 
 test("missing GITHUB_WORKSPACE environment variable", async () => {

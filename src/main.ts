@@ -4,6 +4,7 @@ import * as github from "@actions/github"
 import { exec } from "@actions/exec"
 import XcutilsVersionResolver from "./XcutilsVersionResolver"
 import applyXcodeVersionsFile from "./applyXcodeVersionsFile"
+import generateBadge from "./generateBadge"
 
 export async function run(): Promise<void> {
   try {
@@ -40,6 +41,25 @@ export async function run(): Promise<void> {
     const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile)
     const xcutilsVersionResolver = new XcutilsVersionResolver(xcodeSearchPath)
     await applyXcodeVersionsFile(xcodeVersionsFilePath, xcutilsVersionResolver)
+
+    const xcodeVersionBadgePath = core.getInput("xcode-version-badge-path")
+
+    if (xcodeVersionBadgePath !== "") {
+      const xcodeVersionBadgeVersionsString = core.getInput(
+        "xcode-version-badge-versions"
+      )
+      const xcodeVersionBadgeVersions = xcodeVersionBadgeVersionsString
+        .split(",")
+        .map((s) => s.trim())
+
+      if (xcodeVersionBadgeVersions.length > 0) {
+        await generateBadge(
+          path.resolve(workspacePath, xcodeVersionBadgePath),
+          xcodeVersionBadgeVersions,
+          xcutilsVersionResolver
+        )
+      }
+    }
 
     const githubToken = core.getInput("github-token")
 

@@ -65,6 +65,8 @@ jobs:
         with:
           xcode-versions-file: ./src/__tests__/xcode-versions.yml
           xcode-search-path: ./src/__tests__/Xcodes
+          xcode-version-badge-versions: "last-major, latest,beta"
+          xcode-version-badge-path: ./.github/xcode-versions-badge.svg
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate run
