@@ -15,7 +15,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
     this.xcodeSearchPath = xcodeSearchPath
   }
 
-  async resolveVersion(versionSpecifier: string): Promise<string> {
+  async resolveVersion(versionSpecifier: string): Promise<string | undefined> {
     const json = await this.run([
       "select",
       versionSpecifier,
@@ -27,7 +27,7 @@ export default class XcutilsVersionResolver implements VersionResolver {
     const versions = JSON.parse(json) as XcodeVersion[]
 
     if (versions.length === 0) {
-      throw Error(`No versions found matching ${versionSpecifier}`)
+      return
     }
 
     const version = versions[0]

@@ -103,9 +103,7 @@ test("resolving to no versions", async () => {
 
   const resolver = new XcutilsVersionResolver(searchPath)
 
-  await expect(resolver.resolveVersion("latest")).rejects.toEqual(
-    new Error(`No versions found matching latest`)
-  )
+  await expect(resolver.resolveVersion("latest")).resolves.toBeUndefined()
 
   expect(mockedDownloadTool).toBeCalled()
   expect(mockedExtractZip).toBeCalledWith(

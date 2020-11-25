@@ -1,3 +1,3 @@
 export default interface VersionResolver {
-  resolveVersion(version: string): Promise<string>
+  resolveVersion(version: string): Promise<string | undefined>
 }

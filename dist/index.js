@@ -14730,8 +14730,14 @@ function execute(params, input) {
     });
 }
 async function updatesFrom(node, versionResolver, keyPath = []) {
+    const isNotUndefined = (value) => {
+        return value !== undefined;
+    };
     if (typeof node === "string") {
         const resolvedVersion = await versionResolver.resolveVersion(node);
+        if (resolvedVersion === undefined) {
+            throw new Error(`Version specifier ${node} is the only version specified for path ${keyPath} but did not resolve to a version`);
+        }
         return [
             {
                 keyPath,
@@ -14742,10 +14748,14 @@ async function updatesFrom(node, versionResolver, keyPath = []) {
     else if (Array.isArray(node)) {
         const resolvePromises = node.map((version) => versionResolver.resolveVersion(version));
         const versions = await Promise.all(resolvePromises);
+        const resolvedVersions = versions.filter(isNotUndefined);
+        if (resolvedVersions.length === 0) {
+            throw new Error(`All version specifiers for path ${keyPath} did not resolve to a version: ${node}`);
+        }
         return [
             {
                 keyPath,
-                value: versions,
+                value: resolvedVersions,
             },
         ];
     }
@@ -15026,7 +15036,7 @@ class XcutilsVersionResolver {
         core.debug(`Resolved versions for ${versionSpecifier}: ${json}`);
         const versions = JSON.parse(json);
         if (versions.length === 0) {
-            throw Error(`No versions found matching ${versionSpecifier}`);
+            return;
         }
         const version = versions[0];
         core.debug(`Resolved ${versionSpecifier} to ${JSON.stringify(version)}`);

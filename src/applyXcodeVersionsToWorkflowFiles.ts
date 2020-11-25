@@ -84,8 +84,19 @@ export async function updatesFrom(
   versionResolver: VersionResolver,
   keyPath: string[] = []
 ): Promise<WorkflowUpdate[]> {
+  const isNotUndefined = <S>(value: S | undefined): value is S => {
+    return value !== undefined
+  }
+
   if (typeof node === "string") {
     const resolvedVersion = await versionResolver.resolveVersion(node)
+
+    if (resolvedVersion === undefined) {
+      throw new Error(
+        `Version specifier ${node} is the only version specified for path ${keyPath} but did not resolve to a version`
+      )
+    }
+
     return [
       {
         keyPath,
@@ -98,11 +109,18 @@ export async function updatesFrom(
     )
 
     const versions = await Promise.all(resolvePromises)
+    const resolvedVersions = versions.filter(isNotUndefined)
+
+    if (resolvedVersions.length === 0) {
+      throw new Error(
+        `All version specifiers for path ${keyPath} did not resolve to a version: ${node}`
+      )
+    }
 
     return [
       {
         keyPath,
-        value: versions,
+        value: resolvedVersions,
       },
     ]
   } else {
