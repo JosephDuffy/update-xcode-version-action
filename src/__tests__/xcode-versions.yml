@@ -7,7 +7,7 @@ workflows:
             xcode:
               - last-major
               - last-minor
-              - unresolved-version
+              - "999.999" # Should not resolve
               - latest
               - beta
       last-major:
