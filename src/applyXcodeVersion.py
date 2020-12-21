@@ -13,10 +13,7 @@ def getFromDict(dataDict, mapList):
 
 
 def setInDict(dataDict, mapList, value):
-    if len(value) == 1:
-        getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value[0]
-    else:
-        getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value
+    getFromDict(dataDict, mapList[:-1])[mapList[-1]] = value
 
 
 parser = argparse.ArgumentParser(description="Apply Xcode version to YAML file")
