@@ -1,0 +1,48 @@
+name: Pull Request Checks
+
+on: [pull_request]
+
+jobs:
+  check_format:
+    name: Check for formatting errors using on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Read .node-version
+        run: echo "##[set-output name=node-version;]$(cat .node-version)"
+        id: node-version
+
+      - name: Install node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: "${{ steps.node-version.outputs.node-version }}"
+
+      - run: npm install
+      - run: npm run format:check
+
+  lint:
+    name: Check for linting errors using on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Read .node-version
+        run: echo "##[set-output name=node-version;]$(cat .node-version)"
+        id: node-version
+
+      - name: Install node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: "${{ steps.node-version.outputs.node-version }}"
+
+      - run: npm install
+      - run: npm run lint
