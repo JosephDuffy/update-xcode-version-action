@@ -27,6 +27,7 @@ test("applyXcodeVersionsFile", async () => {
       filePath: PathLike | number,
       options?:
         | (BaseEncodingOptions & { flag?: string })
+        // eslint-disable-next-line no-undef
         | BufferEncoding
         | null
     ): Buffer | string => {
