@@ -1,5 +1,5 @@
 name: "Update Xcode Version"
-description: "Update GitHub actions workflows and/or Xcode projects"
+description: "Update Xcode versions used in GitHub Actions workflows"
 inputs:
   xcode-versions-file:
     required: true
