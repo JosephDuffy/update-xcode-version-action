@@ -1,5 +1,5 @@
 import { mocked } from "ts-jest/utils"
-import { readFileSync, writeFileSync, PathLike, BaseEncodingOptions } from "fs"
+import { readFileSync, writeFileSync, PathLike } from "fs"
 import * as path from "path"
 import applyXcodeVersionsFile from "../applyXcodeVersionsFile"
 import MockResolver from "./MockResolver"
@@ -25,19 +25,15 @@ test("applyXcodeVersionsFile", async () => {
   mockedReadFileSync.mockImplementation(
     (
       filePath: PathLike | number,
-      options?:
-        | (BaseEncodingOptions & { flag?: string })
-        // eslint-disable-next-line no-undef
-        | BufferEncoding
-        | null
-    ): Buffer | string => {
+      options?: { encoding?: string | null; flag?: string } | string | null
+    ): string | Buffer => {
       switch (filePath) {
         case fullXcodeVersionsFilePath:
           return fs.readFileSync(filePath, options)
         case fullInputFilePath:
           return fs.readFileSync(filePath, options)
         default:
-          throw Error(`Unexepected path requested: ${filePath}`)
+          throw Error(`Unexpected path requested: ${filePath}`)
       }
     }
   )
