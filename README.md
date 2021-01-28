@@ -3,9 +3,9 @@
 ![Tests](https://github.com/JosephDuffy/update-xcode-version-action/workflows/Tests/badge.svg)
 [![codecov](https://codecov.io/gh/JosephDuffy/update-xcode-version-action/branch/master/graph/badge.svg)](https://codecov.io/gh/JosephDuffy/update-xcode-version-action)
 
-`update-xcode-version-action` is a GitHub actions that utilises [`xcutils`](https://github.com/JosephDuffy/xcutils) to automate the creation of pull requests when a new Xcode version is available (on GitHub actions).
+`update-xcode-version-action` is a GitHub Action that utilises [`xcutils`](https://github.com/JosephDuffy/xcutils) to automate the creation of pull requests when a new Xcode version is available (on GitHub Actions).
 
-It can be configured to update GitHub actions workflow files and create a pull request with the changes.
+It can be configured to update GitHub Actions workflow files and create a pull request with the changes.
 
 Thanks to `xcutils` [versions can be specified as `latest`, `beta`, `last-minor`, etc.](https://github.com/JosephDuffy/xcutils#version-specifiers), allowing for a single configuration to continue working without the need for extra tweaking. **You can think of your versions specification as a lock file for Xcode versions**.
 
@@ -80,11 +80,30 @@ jobs:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.UPDATE_XCODE_VERSIONS_GITHUB_TOKEN }} # A token that can update workflows, required to push changes to workflow files
 
       - name: Update Xcode Versions
         uses: josephduffy/update-xcode-version-action@master
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} # Required to create pull requests, can be the default token provided by GitHub Actions
           xcode-versions-file: .github/xcode-versions.yml # Default, not required, but can be changed
 ```
 
 When `update-xcode-version-action` discovers a change in the resolved versions it will create a pull request with the changes.
+
+## Badge Generation
+
+`update-xcode-version-action` can be configured to create a badge that displays the supported Xcode versions, which fits in well for use in READMEs.
+
+```yaml
+# ...
+- name: Update Xcode Versions
+  uses: josephduffy/update-xcode-version-action@master
+  with:
+    xcode-version-badge-path: ./.github/xcode-versions-badge.svg # Provide a path to output the badge to
+    xcode-version-badge-versions: "last-major, latest, beta" # A comma separated list of versions to display in the badge. Defaults to "latest".
+    # ...
+```
+
+This would produce: [![Example badge](https://raw.githubusercontent.com/JosephDuffy/update-xcode-version-action/update-xcode-version-action/update-xcode-versions/.github/xcode-versions-badge.svg)](https://github.com/JosephDuffy/update-xcode-version-action/blob/update-xcode-version-action/update-xcode-versions/.github/xcode-versions-badge.svg)
