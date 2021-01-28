@@ -4,7 +4,7 @@ inputs:
   xcode-versions-file:
     required: true
     description: "The path to a .yml file that describes which versions should be applied to which files."
-    default: ".github/workflow-xcode-versions.yml"
+    default: ".github/xcode-versions.yml"
   xcode-search-path:
     required: true
     description: "The path to search for Xcode versions in."
