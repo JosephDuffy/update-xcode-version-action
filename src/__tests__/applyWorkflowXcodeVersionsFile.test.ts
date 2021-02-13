@@ -19,9 +19,12 @@ afterEach(() => {
 
 const xcodeVersionsFilePath = "./src/__tests__/xcode-versions.yml"
 const inputFilePath = path.resolve("./src/__tests__/workflows/input.yml")
-const outputFilePath = "./src/__tests__/workflows/output.yml"
+const outputSingleQuotesFilePath =
+  "./src/__tests__/workflows/output-single-quotes.yml"
+const outputDoubleQuotesFilePath =
+  "./src/__tests__/workflows/output-double-quotes.yml"
 
-test("applyXcodeVersionsToWorkflowFiles", async () => {
+test("applyXcodeVersionsToWorkflowFiles single quotes", async () => {
   const xcodeVersions = yaml.parse(
     fs.readFileSync(xcodeVersionsFilePath, "utf8")
   ) as XcodeVersionsFile
@@ -33,10 +36,39 @@ test("applyXcodeVersionsToWorkflowFiles", async () => {
   await applyXcodeVersionsToWorkflowFiles(
     workflowXcodeVersions,
     "./src/__tests__/",
-    resolver
+    resolver,
+    "single"
   )
 
-  const expectedContents = fs.readFileSync(outputFilePath, "utf8")
+  const expectedContents = fs.readFileSync(outputSingleQuotesFilePath, "utf8")
+
+  expect(mockedReadFileSync).toBeCalledTimes(1)
+  expect(mockedReadFileSync).toBeCalledWith(inputFilePath)
+  expect(mockedWriteFileSync).toBeCalledTimes(1)
+  expect(mockedWriteFileSync).toBeCalledWith(
+    inputFilePath,
+    expectedContents,
+    "utf8"
+  )
+})
+
+test("applyXcodeVersionsToWorkflowFiles double quotes", async () => {
+  const xcodeVersions = yaml.parse(
+    fs.readFileSync(xcodeVersionsFilePath, "utf8")
+  ) as XcodeVersionsFile
+
+  mockedReadFileSync.mockReturnValue(fs.readFileSync(inputFilePath, "utf8"))
+
+  const workflowXcodeVersions = xcodeVersions.workflows
+  const resolver = new MockResolver()
+  await applyXcodeVersionsToWorkflowFiles(
+    workflowXcodeVersions,
+    "./src/__tests__/",
+    resolver,
+    "double"
+  )
+
+  const expectedContents = fs.readFileSync(outputDoubleQuotesFilePath, "utf8")
 
   expect(mockedReadFileSync).toBeCalledTimes(1)
   expect(mockedReadFileSync).toBeCalledWith(inputFilePath)

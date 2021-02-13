@@ -28,6 +28,13 @@ export async function run(): Promise<void> {
       }`
     )
 
+    const quotes = core.getInput("quotes")
+
+    if (quotes !== "single" && quotes !== "double") {
+      core.error("Quotes can only be 'single' or 'double'")
+      return
+    }
+
     const xcodeSearchPath = path.resolve(
       workspacePath,
       xcodeSearchPathInput.length > 0 ? xcodeSearchPathInput : "/Applications"
@@ -40,7 +47,11 @@ export async function run(): Promise<void> {
     // The path to the file that describes which workflow and Xcode projects files to update
     const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile)
     const xcutilsVersionResolver = new XcutilsVersionResolver(xcodeSearchPath)
-    await applyXcodeVersionsFile(xcodeVersionsFilePath, xcutilsVersionResolver)
+    await applyXcodeVersionsFile(
+      xcodeVersionsFilePath,
+      xcutilsVersionResolver,
+      quotes
+    )
 
     const xcodeVersionBadgePath = core.getInput("xcode-version-badge-path")
 

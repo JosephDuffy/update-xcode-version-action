@@ -3158,12 +3158,17 @@ async function run() {
         core.debug(`xcode-versions-file input: ${xcodeVersionsFile}`);
         const xcodeSearchPathInput = core.getInput("xcode-search-path");
         core.debug(`xcode-search-path input: ${xcodeSearchPathInput.length > 0 ? xcodeSearchPathInput : "not provided"}`);
+        const quotes = core.getInput("quotes");
+        if (quotes !== "single" && quotes !== "double") {
+            core.error("Quotes can only be 'single' or 'double'");
+            return;
+        }
         const xcodeSearchPath = path.resolve(workspacePath, xcodeSearchPathInput.length > 0 ? xcodeSearchPathInput : "/Applications");
         core.debug(`Resolved Xcode search path "${xcodeSearchPathInput}" against workspace "${workspacePath}": "${xcodeSearchPath}`);
         // The path to the file that describes which workflow and Xcode projects files to update
         const xcodeVersionsFilePath = path.resolve(workspacePath, xcodeVersionsFile);
         const xcutilsVersionResolver = new XcutilsVersionResolver_1.default(xcodeSearchPath);
-        await applyXcodeVersionsFile_1.default(xcodeVersionsFilePath, xcutilsVersionResolver);
+        await applyXcodeVersionsFile_1.default(xcodeVersionsFilePath, xcutilsVersionResolver, quotes);
         const xcodeVersionBadgePath = core.getInput("xcode-version-badge-path");
         if (xcodeVersionBadgePath !== "") {
             const xcodeVersionBadgeVersionsString = core.getInput("xcode-version-badge-versions");
@@ -4420,12 +4425,12 @@ const yaml = __importStar(__webpack_require__(596));
  * @param xcodeVersionsFilePath The path to the file that specifies the key paths and YAML files to update.
  * @param versionResolver An object that can be used to resolve versions in leaves.
  */
-function applyXcodeVersionsFile(xcodeVersionsFilePath, versionResolver) {
+function applyXcodeVersionsFile(xcodeVersionsFilePath, versionResolver, quotes) {
     const xcodeVersionsFileContents = fs.readFileSync(xcodeVersionsFilePath, "utf8");
     const xcodeVersions = yaml.parse(xcodeVersionsFileContents);
     const xcodeVersionsFileDirectory = path.dirname(xcodeVersionsFilePath);
     const workflowXcodeVersions = xcodeVersions.workflows;
-    return applyXcodeVersionsToWorkflowFiles_1.default(workflowXcodeVersions, xcodeVersionsFileDirectory, versionResolver);
+    return applyXcodeVersionsToWorkflowFiles_1.default(workflowXcodeVersions, xcodeVersionsFileDirectory, versionResolver, quotes);
 }
 exports.default = applyXcodeVersionsFile;
 
@@ -14750,7 +14755,7 @@ const core = __importStar(__webpack_require__(470));
 const fs = __importStar(__webpack_require__(747));
 const stream_1 = __webpack_require__(794);
 const child_process_1 = __webpack_require__(129);
-async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionResolver) {
+async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionResolver, quotes) {
     await execute([
         "pip3",
         "install",
@@ -14769,7 +14774,14 @@ async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionRes
         let modifiedFileContents = workflowFileContents;
         for (const update of updates) {
             try {
-                const output = await execute([scriptPath, ...update.keyPath, "--yaml_value", ...update.value], modifiedFileContents);
+                const output = await execute([
+                    scriptPath,
+                    ...update.keyPath,
+                    "--yaml_value",
+                    ...update.value,
+                    "--quotes",
+                    quotes,
+                ], modifiedFileContents);
                 modifiedFileContents = Buffer.from(output);
             }
             catch (error) {

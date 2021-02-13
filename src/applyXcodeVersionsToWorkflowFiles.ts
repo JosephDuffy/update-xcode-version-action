@@ -9,7 +9,8 @@ import { exec } from "child_process"
 export default async function applyXcodeVersionsToWorkflowFiles(
   workflows: Workflows,
   rootPath: string,
-  versionResolver: VersionResolver
+  versionResolver: VersionResolver,
+  quotes: "single" | "double"
 ): Promise<void> {
   await execute([
     "pip3",
@@ -37,7 +38,14 @@ export default async function applyXcodeVersionsToWorkflowFiles(
     for (const update of updates) {
       try {
         const output = await execute(
-          [scriptPath, ...update.keyPath, "--yaml_value", ...update.value],
+          [
+            scriptPath,
+            ...update.keyPath,
+            "--yaml_value",
+            ...update.value,
+            "--quotes",
+            quotes,
+          ],
           modifiedFileContents
         )
         modifiedFileContents = Buffer.from(output)

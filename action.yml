@@ -16,6 +16,9 @@ inputs:
   xcode-version-badge-versions:
     description: "The version(s) to display in the generated badge. Provide multiple versions by separating with commas."
     default: latest
+  quotes:
+    describes: "Which types of quotes to use when modifying the YAML."
+    default: "double"
 runs:
   using: "node12"
   main: "dist/index.js"
