@@ -13,7 +13,8 @@ import XcodeVersionsFile from "./XcodeVersionsFile"
  */
 export default function applyXcodeVersionsFile(
   xcodeVersionsFilePath: string,
-  versionResolver: VersionResolver
+  versionResolver: VersionResolver,
+  quotes: "single" | "double"
 ): Promise<void> {
   const xcodeVersionsFileContents = fs.readFileSync(
     xcodeVersionsFilePath,
@@ -29,6 +30,7 @@ export default function applyXcodeVersionsFile(
   return applyXcodeVersionsToWorkflowFiles(
     workflowXcodeVersions,
     xcodeVersionsFileDirectory,
-    versionResolver
+    versionResolver,
+    quotes
   )
 }
