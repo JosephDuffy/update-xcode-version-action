@@ -5,7 +5,8 @@
   "main": "src/main.ts",
   "scripts": {
     "build": "tsc",
-    "pack": "ncc build src/main.ts",
+    "checkTypes": "tsc --noEmit",
+    "pack": "esbuild src/main.ts --bundle --platform=node --target=node12.20.0 --outfile=dist/index.js",
     "test": "jest",
     "test:watch": "npm run test -- --watch",
     "test:watchAll": "npm run test -- --watchAll",
@@ -40,7 +41,7 @@
     "@types/jest": "^26.0.20",
     "@types/node": "~12.19",
     "@typescript-eslint/parser": "^4.15.1",
-    "@zeit/ncc": "^0.22.3",
+    "esbuild": "^0.8.46",
     "eslint": "^7.20.0",
     "eslint-plugin-github": "^4.1.1",
     "eslint-plugin-jest": "^24.1.5",
