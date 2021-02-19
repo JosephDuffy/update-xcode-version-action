@@ -5,6 +5,7 @@
   "main": "src/main.ts",
   "scripts": {
     "build": "tsc",
+    "checkTypes": "tsc --noEmit",
     "pack": "esbuild src/main.ts --bundle --platform=node --target=node12.20.0 --outfile=dist/index.js",
     "test": "jest",
     "test:watch": "npm run test -- --watch",

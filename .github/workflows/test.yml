@@ -72,6 +72,33 @@ jobs:
       - name: Check `npm run pack` was run before commit
         run: git diff --exit-code
 
+  check-types:
+    name: Check Types
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Read .node-version
+        run: echo "##[set-output name=node-version;]$(cat .node-version)"
+        id: node-version
+
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "${{ steps.node-version.outputs.node-version }}"
+
+      - name: Cache NPM
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-
+
+      - run: npm install
+
+      - run: npm run checkTypes
+
   test-action:
     name: Test Action Run
     runs-on: macOS-latest
