@@ -25,9 +25,7 @@ var __exportStar = (target, module2, desc) => {
   return target;
 };
 var __toModule = (module2) => {
-  if (module2 && module2.__esModule)
-    return module2;
-  return __exportStar(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", {value: module2, enumerable: true})), module2);
+  return __exportStar(__markAsModule(__defProp(module2 != null ? __create(__getProtoOf(module2)) : {}, "default", module2 && module2.__esModule && "default" in module2 ? {get: () => module2.default, enumerable: true} : {value: module2, enumerable: true})), module2);
 };
 
 // node_modules/@actions/core/lib/utils.js
@@ -12891,7 +12889,7 @@ var XcutilsVersionResolver = class {
         }
       }
     };
-    await import_exec.exec("xcutils", args, options);
+    await (0, import_exec.exec)("xcutils", args, options);
     return output;
   }
   async pullXcutils() {
@@ -12957,7 +12955,7 @@ async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionRes
 function execute(params, input) {
   return new Promise((resolve3, reject) => {
     core2.debug(`Spawning process: ${params.join(" ")}`);
-    const child = import_child_process.exec(params.join(" "), (error3, stdout) => {
+    const child = (0, import_child_process.exec)(params.join(" "), (error3, stdout) => {
       if (error3) {
         reject(error3);
       } else {
@@ -13077,7 +13075,7 @@ async function run() {
     const githubToken = core3.getInput("github-token");
     if (githubToken !== "") {
       core3.debug("Have a GitHub token; creating pull request");
-      const gitDiffExitCode = await import_exec2.exec("git", ["diff", "--exit-code"], {
+      const gitDiffExitCode = await (0, import_exec2.exec)("git", ["diff", "--exit-code"], {
         ignoreReturnCode: true
       });
       if (gitDiffExitCode === 0) {
@@ -13085,15 +13083,15 @@ async function run() {
         return;
       }
       core3.debug("Setting up committer details");
-      await import_exec2.exec("git", [
+      await (0, import_exec2.exec)("git", [
         "config",
         "--local",
         "user.email",
         "action@github.com"
       ]);
-      await import_exec2.exec("git", ["config", "--local", "user.name", "GitHub Action"]);
+      await (0, import_exec2.exec)("git", ["config", "--local", "user.name", "GitHub Action"]);
       let baseBranchName = "";
-      await import_exec2.exec("git", ["branch", "--show-current"], {
+      await (0, import_exec2.exec)("git", ["branch", "--show-current"], {
         listeners: {
           stdout: (buffer) => {
             baseBranchName += buffer.toString("utf8").replace(/\n$/, "");
@@ -13102,17 +13100,17 @@ async function run() {
       });
       const octokit = github.getOctokit(githubToken);
       const commitAndPushChanges = async () => {
-        await import_exec2.exec("git", [
+        await (0, import_exec2.exec)("git", [
           "checkout",
           "-b",
           "update-xcode-version-action/update-xcode-versions"
         ]);
         core3.debug("Created branch");
-        await import_exec2.exec("git", ["add", "."]);
+        await (0, import_exec2.exec)("git", ["add", "."]);
         core3.debug("Staged all changes");
-        await import_exec2.exec("git", ["commit", "-m", "Update Xcode Versions"]);
+        await (0, import_exec2.exec)("git", ["commit", "-m", "Update Xcode Versions"]);
         core3.debug("Created commit");
-        await import_exec2.exec("git", [
+        await (0, import_exec2.exec)("git", [
           "push",
           "--force",
           "origin",
