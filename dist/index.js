@@ -1608,22 +1608,19 @@ var require_dist_node2 = __commonJS((exports2) => {
   exports2.endpoint = endpoint;
 });
 
-// node_modules/node-fetch/lib/index.mjs
-var require_lib = __commonJS((exports2) => {
-  __markAsModule(exports2);
-  __export(exports2, {
-    FetchError: () => FetchError,
-    Headers: () => Headers,
-    Request: () => Request,
-    Response: () => Response,
-    default: () => lib_default
-  });
-  var import_stream2 = __toModule(require("stream"));
-  var import_http = __toModule(require("http"));
-  var import_url = __toModule(require("url"));
-  var import_https2 = __toModule(require("https"));
-  var import_zlib = __toModule(require("zlib"));
-  var Readable = import_stream2.default.Readable;
+// node_modules/node-fetch/lib/index.js
+var require_lib = __commonJS((exports2, module2) => {
+  "use strict";
+  Object.defineProperty(exports2, "__esModule", {value: true});
+  function _interopDefault(ex) {
+    return ex && typeof ex === "object" && "default" in ex ? ex["default"] : ex;
+  }
+  var Stream2 = _interopDefault(require("stream"));
+  var http = _interopDefault(require("http"));
+  var Url = _interopDefault(require("url"));
+  var https2 = _interopDefault(require("https"));
+  var zlib = _interopDefault(require("zlib"));
+  var Readable = Stream2.Readable;
   var BUFFER = Symbol("buffer");
   var TYPE = Symbol("type");
   var Blob = class {
@@ -1741,7 +1738,7 @@ var require_lib = __commonJS((exports2) => {
   } catch (e) {
   }
   var INTERNALS = Symbol("Body internals");
-  var PassThrough = import_stream2.default.PassThrough;
+  var PassThrough = Stream2.PassThrough;
   function Body(body) {
     var _this = this;
     var _ref = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {}, _ref$size = _ref.size;
@@ -1760,7 +1757,7 @@ var require_lib = __commonJS((exports2) => {
       body = Buffer.from(body);
     } else if (ArrayBuffer.isView(body)) {
       body = Buffer.from(body.buffer, body.byteOffset, body.byteLength);
-    } else if (body instanceof import_stream2.default)
+    } else if (body instanceof Stream2)
       ;
     else {
       body = Buffer.from(String(body));
@@ -1772,7 +1769,7 @@ var require_lib = __commonJS((exports2) => {
     };
     this.size = size;
     this.timeout = timeout;
-    if (body instanceof import_stream2.default) {
+    if (body instanceof Stream2) {
       body.on("error", function(err) {
         const error3 = err.name === "AbortError" ? err : new FetchError(`Invalid response body while trying to fetch ${_this.url}: ${err.message}`, "system", err);
         _this[INTERNALS].error = error3;
@@ -1861,7 +1858,7 @@ var require_lib = __commonJS((exports2) => {
     if (Buffer.isBuffer(body)) {
       return Body.Promise.resolve(body);
     }
-    if (!(body instanceof import_stream2.default)) {
+    if (!(body instanceof Stream2)) {
       return Body.Promise.resolve(Buffer.alloc(0));
     }
     let accum = [];
@@ -1960,7 +1957,7 @@ var require_lib = __commonJS((exports2) => {
     if (instance.bodyUsed) {
       throw new Error("cannot clone body after it is used");
     }
-    if (body instanceof import_stream2.default && typeof body.getBoundary !== "function") {
+    if (body instanceof Stream2 && typeof body.getBoundary !== "function") {
       p1 = new PassThrough();
       p2 = new PassThrough();
       body.pipe(p1);
@@ -1987,7 +1984,7 @@ var require_lib = __commonJS((exports2) => {
       return null;
     } else if (typeof body.getBoundary === "function") {
       return `multipart/form-data;boundary=${body.getBoundary()}`;
-    } else if (body instanceof import_stream2.default) {
+    } else if (body instanceof Stream2) {
       return null;
     } else {
       return "text/plain;charset=UTF-8";
@@ -2259,7 +2256,7 @@ var require_lib = __commonJS((exports2) => {
     return headers;
   }
   var INTERNALS$1 = Symbol("Response internals");
-  var STATUS_CODES = import_http.default.STATUS_CODES;
+  var STATUS_CODES = http.STATUS_CODES;
   var Response = class {
     constructor() {
       let body = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : null;
@@ -2327,9 +2324,9 @@ var require_lib = __commonJS((exports2) => {
     configurable: true
   });
   var INTERNALS$2 = Symbol("Request internals");
-  var parse_url = import_url.default.parse;
-  var format_url = import_url.default.format;
-  var streamDestructionSupported = "destroy" in import_stream2.default.Readable.prototype;
+  var parse_url = Url.parse;
+  var format_url = Url.format;
+  var streamDestructionSupported = "destroy" in Stream2.Readable.prototype;
   function isRequest(input) {
     return typeof input === "object" && typeof input[INTERNALS$2] === "object";
   }
@@ -2432,7 +2429,7 @@ var require_lib = __commonJS((exports2) => {
     if (!/^https?:$/.test(parsedURL.protocol)) {
       throw new TypeError("Only HTTP(S) protocols are supported");
     }
-    if (request.signal && request.body instanceof import_stream2.default.Readable && !streamDestructionSupported) {
+    if (request.signal && request.body instanceof Stream2.Readable && !streamDestructionSupported) {
       throw new Error("Cancellation of streamed requests with AbortSignal is not supported in node < 8");
     }
     let contentLengthValue = null;
@@ -2476,8 +2473,8 @@ var require_lib = __commonJS((exports2) => {
   AbortError.prototype = Object.create(Error.prototype);
   AbortError.prototype.constructor = AbortError;
   AbortError.prototype.name = "AbortError";
-  var PassThrough$1 = import_stream2.default.PassThrough;
-  var resolve_url = import_url.default.resolve;
+  var PassThrough$1 = Stream2.PassThrough;
+  var resolve_url = Url.resolve;
   function fetch(url, opts) {
     if (!fetch.Promise) {
       throw new Error("native promise missing, set fetch.Promise to your favorite alternative");
@@ -2486,13 +2483,13 @@ var require_lib = __commonJS((exports2) => {
     return new fetch.Promise(function(resolve3, reject) {
       const request = new Request(url, opts);
       const options = getNodeRequestOptions(request);
-      const send = (options.protocol === "https:" ? import_https2.default : import_http.default).request;
+      const send = (options.protocol === "https:" ? https2 : http).request;
       const signal = request.signal;
       let response = null;
       const abort = function abort2() {
         let error3 = new AbortError("The user aborted a request.");
         reject(error3);
-        if (request.body && request.body instanceof import_stream2.default.Readable) {
+        if (request.body && request.body instanceof Stream2.Readable) {
           request.body.destroy(error3);
         }
         if (!response || !response.body)
@@ -2607,11 +2604,11 @@ var require_lib = __commonJS((exports2) => {
           return;
         }
         const zlibOptions = {
-          flush: import_zlib.default.Z_SYNC_FLUSH,
-          finishFlush: import_zlib.default.Z_SYNC_FLUSH
+          flush: zlib.Z_SYNC_FLUSH,
+          finishFlush: zlib.Z_SYNC_FLUSH
         };
         if (codings == "gzip" || codings == "x-gzip") {
-          body = body.pipe(import_zlib.default.createGunzip(zlibOptions));
+          body = body.pipe(zlib.createGunzip(zlibOptions));
           response = new Response(body, response_options);
           resolve3(response);
           return;
@@ -2620,17 +2617,17 @@ var require_lib = __commonJS((exports2) => {
           const raw = res.pipe(new PassThrough$1());
           raw.once("data", function(chunk) {
             if ((chunk[0] & 15) === 8) {
-              body = body.pipe(import_zlib.default.createInflate());
+              body = body.pipe(zlib.createInflate());
             } else {
-              body = body.pipe(import_zlib.default.createInflateRaw());
+              body = body.pipe(zlib.createInflateRaw());
             }
             response = new Response(body, response_options);
             resolve3(response);
           });
           return;
         }
-        if (codings == "br" && typeof import_zlib.default.createBrotliDecompress === "function") {
-          body = body.pipe(import_zlib.default.createBrotliDecompress());
+        if (codings == "br" && typeof zlib.createBrotliDecompress === "function") {
+          body = body.pipe(zlib.createBrotliDecompress());
           response = new Response(body, response_options);
           resolve3(response);
           return;
@@ -2645,7 +2642,13 @@ var require_lib = __commonJS((exports2) => {
     return code === 301 || code === 302 || code === 303 || code === 307 || code === 308;
   };
   fetch.Promise = global.Promise;
-  var lib_default = fetch;
+  module2.exports = exports2 = fetch;
+  Object.defineProperty(exports2, "__esModule", {value: true});
+  exports2.default = exports2;
+  exports2.Headers = Headers;
+  exports2.Request = Request;
+  exports2.Response = Response;
+  exports2.FetchError = FetchError;
 });
 
 // node_modules/deprecation/dist-node/index.js
