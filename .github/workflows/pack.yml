@@ -1,0 +1,39 @@
+name: Pack dist/index.js
+
+on: issue_comment
+
+jobs:
+  pack_by_pr_comment:
+    name: Pack dist/index.js
+    if: ${{ github.event.issue.pull_request && contains(github.event.issue.comment, '@github-actions pack') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Read .node-version
+        run: echo "##[set-output name=node-version;]$(cat .node-version)"
+        id: node-version
+
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "${{ steps.node-version.outputs.node-version }}"
+
+      - name: Cache NPM
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - run: npm install
+
+      - run: npm run pack
+
+      - run: git add dist/index.js
+
+      - run: git commit -m "npm run pack"
+
+      - run: git push origin
