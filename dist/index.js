@@ -13158,3 +13158,7 @@ async function run() {
 if (process.env.NODE_ENV !== "test") {
   run();
 }
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  run
+});
