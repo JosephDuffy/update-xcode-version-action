@@ -1,6 +1,8 @@
 name: Pack dist/index.js
 
-on: issue_comment
+on:
+  issue_comment:
+    types: [created, edited]
 
 jobs:
   pack_by_pr_comment:
