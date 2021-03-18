@@ -9299,11 +9299,15 @@ var require_parse_cst = __commonJS((exports2) => {
       let ch = src[offset];
       while (ch === PlainValue.Char.ANCHOR || ch === PlainValue.Char.COMMENT || ch === PlainValue.Char.TAG || ch === "\n") {
         if (ch === "\n") {
-          const lineStart = offset + 1;
-          const inEnd = PlainValue.Node.endOfIndent(src, lineStart);
+          let inEnd = offset;
+          let lineStart;
+          do {
+            lineStart = inEnd + 1;
+            inEnd = PlainValue.Node.endOfIndent(src, lineStart);
+          } while (src[inEnd] === "\n");
           const indentDiff = inEnd - (lineStart + this.indent);
           const noIndicatorAsIndent = parent.type === PlainValue.Type.SEQ_ITEM && parent.context.atLineStart;
-          if (!PlainValue.Node.nextNodeIsIndented(src[inEnd], indentDiff, !noIndicatorAsIndent))
+          if (src[inEnd] !== "#" && !PlainValue.Node.nextNodeIsIndented(src[inEnd], indentDiff, !noIndicatorAsIndent))
             break;
           this.atLineStart = true;
           this.lineStart = lineStart;
@@ -9371,8 +9375,8 @@ var require_parse_cst = __commonJS((exports2) => {
   exports2.parse = parse2;
 });
 
-// node_modules/yaml/dist/resolveSeq-4a68b39b.js
-var require_resolveSeq_4a68b39b = __commonJS((exports2) => {
+// node_modules/yaml/dist/resolveSeq-d03cb037.js
+var require_resolveSeq_d03cb037 = __commonJS((exports2) => {
   "use strict";
   var PlainValue = require_PlainValue_ec8e588e();
   function addCommentBefore(str, indent, comment) {
@@ -9423,9 +9427,20 @@ ${indent}${str}`;
     let v = value;
     for (let i = path4.length - 1; i >= 0; --i) {
       const k = path4[i];
-      const o = Number.isInteger(k) && k >= 0 ? [] : {};
-      o[k] = v;
-      v = o;
+      if (Number.isInteger(k) && k >= 0) {
+        const a = [];
+        a[k] = v;
+        v = a;
+      } else {
+        const o = {};
+        Object.defineProperty(o, k, {
+          value: v,
+          writable: true,
+          enumerable: true,
+          configurable: true
+        });
+        v = o;
+      }
     }
     return schema.createNode(v, false);
   }
@@ -9655,7 +9670,7 @@ ${indent}${s}` : "\n";
       return String(jsKey);
     if (key instanceof Node && ctx && ctx.doc)
       return key.toString({
-        anchors: {},
+        anchors: Object.create(null),
         doc: ctx.doc,
         indent: "",
         indentStep: ctx.indentStep,
@@ -9694,7 +9709,16 @@ ${indent}${s}` : "\n";
         map.add(key);
       } else {
         const stringKey = stringifyKey(this.key, key, ctx);
-        map[stringKey] = toJSON(this.value, stringKey, ctx);
+        const value = toJSON(this.value, stringKey, ctx);
+        if (stringKey in map)
+          Object.defineProperty(map, stringKey, {
+            value,
+            writable: true,
+            enumerable: true,
+            configurable: true
+          });
+        else
+          map[stringKey] = value;
       }
       return map;
     }
@@ -9724,7 +9748,7 @@ ${indent}${s}` : "\n";
           throw new Error(msg);
         }
       }
-      const explicitKey = !simpleKeys && (!key || keyComment || key instanceof Collection || key.type === PlainValue.Type.BLOCK_FOLDED || key.type === PlainValue.Type.BLOCK_LITERAL);
+      let explicitKey = !simpleKeys && (!key || keyComment || (key instanceof Node ? key instanceof Collection || key.type === PlainValue.Type.BLOCK_FOLDED || key.type === PlainValue.Type.BLOCK_LITERAL : typeof key === "object"));
       const {
         doc,
         indent,
@@ -9738,6 +9762,11 @@ ${indent}${s}` : "\n";
       let chompKeep = false;
       let str = stringify(key, ctx, () => keyComment = null, () => chompKeep = true);
       str = addComment(str, ctx.indent, keyComment);
+      if (!explicitKey && str.length > 1024) {
+        if (simpleKeys)
+          throw new Error("With simple keys, single line scalar must not span more than 1024 characters");
+        explicitKey = true;
+      }
       if (ctx.allNullValues && !simpleKeys) {
         if (this.comment) {
           str = addComment(str, ctx.indent, this.comment);
@@ -9745,7 +9774,7 @@ ${indent}${s}` : "\n";
             onComment();
         } else if (chompKeep && !keyComment && onChompKeep)
           onChompKeep();
-        return ctx.inFlow ? str : `? ${str}`;
+        return ctx.inFlow && !explicitKey ? str : `? ${str}`;
       }
       str = explicitKey ? `? ${str}
 ${indent}:` : `${str}:`;
@@ -9785,7 +9814,8 @@ ${ctx.indent}`;
         if (!flow || valueStr.includes("\n"))
           ws = `
 ${ctx.indent}`;
-      }
+      } else if (valueStr[0] === "\n")
+        ws = "";
       if (chompKeep && !valueComment && onChompKeep)
         onChompKeep();
       return addComment(str + ws + valueStr, ctx.indent, valueComment);
@@ -9983,9 +10013,13 @@ ${ctx.indent}`;
               map.set(key, value);
           } else if (map instanceof Set) {
             map.add(key);
-          } else {
-            if (!Object.prototype.hasOwnProperty.call(map, key))
-              map[key] = value;
+          } else if (!Object.prototype.hasOwnProperty.call(map, key)) {
+            Object.defineProperty(map, key, {
+              value,
+              writable: true,
+              enumerable: true,
+              configurable: true
+            });
           }
         }
       }
@@ -10075,11 +10109,19 @@ ${ctx.indent}`;
       return text;
     const folds = [];
     const escapedFolds = {};
-    let end = lineWidth - (typeof indentAtStart === "number" ? indentAtStart : indent.length);
+    let end = lineWidth - indent.length;
+    if (typeof indentAtStart === "number") {
+      if (indentAtStart > lineWidth - Math.max(2, minContentWidth))
+        folds.push(0);
+      else
+        end = lineWidth - indentAtStart;
+    }
     let split = void 0;
     let prev = void 0;
     let overflow = false;
     let i = -1;
+    let escStart = -1;
+    let escEnd = -1;
     if (mode === FOLD_BLOCK) {
       i = consumeMoreIndentedLines(text, i);
       if (i !== -1)
@@ -10087,6 +10129,7 @@ ${ctx.indent}`;
     }
     for (let ch; ch = text[i += 1]; ) {
       if (mode === FOLD_QUOTED && ch === "\\") {
+        escStart = i;
         switch (text[i + 1]) {
           case "x":
             i += 3;
@@ -10100,6 +10143,7 @@ ${ctx.indent}`;
           default:
             i += 1;
         }
+        escEnd = i;
       }
       if (ch === "\n") {
         if (mode === FOLD_BLOCK)
@@ -10123,9 +10167,12 @@ ${ctx.indent}`;
               ch = text[i += 1];
               overflow = true;
             }
-            folds.push(i - 2);
-            escapedFolds[i - 2] = true;
-            end = i - 2 + endStep;
+            const j = i > escEnd + 1 ? i - 2 : escStart - 1;
+            if (escapedFolds[j])
+              return text;
+            folds.push(j);
+            escapedFolds[j] = true;
+            end = j + endStep;
             split = void 0;
           } else {
             overflow = true;
@@ -10144,10 +10191,15 @@ ${ctx.indent}`;
     for (let i2 = 0; i2 < folds.length; ++i2) {
       const fold = folds[i2];
       const end2 = folds[i2 + 1] || text.length;
-      if (mode === FOLD_QUOTED && escapedFolds[fold])
-        res += `${text[fold]}\\`;
-      res += `
+      if (fold === 0)
+        res = `
+${indent}${text.slice(0, end2)}`;
+      else {
+        if (mode === FOLD_QUOTED && escapedFolds[fold])
+          res += `${text[fold]}\\`;
+        res += `
 ${indent}${text.slice(fold + 1, end2)}`;
+      }
     }
     return res;
   }
@@ -10157,7 +10209,10 @@ ${indent}${text.slice(fold + 1, end2)}`;
     indentAtStart
   }, strOptions.fold) : strOptions.fold;
   var containsDocumentMarker = (str) => /^(%|---|\.\.\.)/m.test(str);
-  function lineLengthOverLimit(str, limit) {
+  function lineLengthOverLimit(str, lineWidth, indentLength) {
+    if (!lineWidth || lineWidth < 0)
+      return false;
+    const limit = lineWidth - indentLength;
     const strLen = str.length;
     if (strLen <= limit)
       return false;
@@ -10280,7 +10335,7 @@ ${indent}`) + "'";
     }
     const indent = ctx.indent || (ctx.forceBlockIndent || containsDocumentMarker(value) ? "  " : "");
     const indentSize = indent ? "2" : "1";
-    const literal = type === PlainValue.Type.BLOCK_FOLDED ? false : type === PlainValue.Type.BLOCK_LITERAL ? true : !lineLengthOverLimit(value, strOptions.fold.lineWidth - indent.length);
+    const literal = type === PlainValue.Type.BLOCK_FOLDED ? false : type === PlainValue.Type.BLOCK_LITERAL ? true : !lineLengthOverLimit(value, strOptions.fold.lineWidth, indent.length);
     let header = literal ? "|" : ">";
     if (!value)
       return header + "\n";
@@ -11273,11 +11328,11 @@ ${ca}` : ca;
   exports2.toJSON = toJSON;
 });
 
-// node_modules/yaml/dist/warnings-39684f17.js
-var require_warnings_39684f17 = __commonJS((exports2) => {
+// node_modules/yaml/dist/warnings-1000a372.js
+var require_warnings_1000a372 = __commonJS((exports2) => {
   "use strict";
   var PlainValue = require_PlainValue_ec8e588e();
-  var resolveSeq = require_resolveSeq_4a68b39b();
+  var resolveSeq = require_resolveSeq_d03cb037();
   var binary = {
     identify: (value) => value instanceof Uint8Array,
     default: false,
@@ -11626,12 +11681,12 @@ ${pair.comment}` : item.comment;
   exports2.warnOptionDeprecation = warnOptionDeprecation;
 });
 
-// node_modules/yaml/dist/Schema-42e9705c.js
-var require_Schema_42e9705c = __commonJS((exports2) => {
+// node_modules/yaml/dist/Schema-88e323a7.js
+var require_Schema_88e323a7 = __commonJS((exports2) => {
   "use strict";
   var PlainValue = require_PlainValue_ec8e588e();
-  var resolveSeq = require_resolveSeq_4a68b39b();
-  var warnings = require_warnings_39684f17();
+  var resolveSeq = require_resolveSeq_d03cb037();
+  var warnings = require_warnings_1000a372();
   function createMap(schema, obj, ctx) {
     const map2 = new resolveSeq.YAMLMap(schema);
     if (obj instanceof Map) {
@@ -11684,13 +11739,13 @@ var require_Schema_42e9705c = __commonJS((exports2) => {
     options: resolveSeq.strOptions
   };
   var failsafe = [map, seq, string];
-  var intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
-  var intResolve = (src, part, radix) => resolveSeq.intOptions.asBigInt ? BigInt(src) : parseInt(part, radix);
-  function intStringify(node, radix, prefix) {
+  var intIdentify$2 = (value) => typeof value === "bigint" || Number.isInteger(value);
+  var intResolve$1 = (src, part, radix) => resolveSeq.intOptions.asBigInt ? BigInt(src) : parseInt(part, radix);
+  function intStringify$1(node, radix, prefix) {
     const {
       value
     } = node;
-    if (intIdentify(value) && value >= 0)
+    if (intIdentify$2(value) && value >= 0)
       return prefix + value.toString(radix);
     return resolveSeq.stringifyNumber(node);
   }
@@ -11716,33 +11771,33 @@ var require_Schema_42e9705c = __commonJS((exports2) => {
     }) => value ? resolveSeq.boolOptions.trueStr : resolveSeq.boolOptions.falseStr
   };
   var octObj = {
-    identify: (value) => intIdentify(value) && value >= 0,
+    identify: (value) => intIdentify$2(value) && value >= 0,
     default: true,
     tag: "tag:yaml.org,2002:int",
     format: "OCT",
     test: /^0o([0-7]+)$/,
-    resolve: (str, oct) => intResolve(str, oct, 8),
+    resolve: (str, oct) => intResolve$1(str, oct, 8),
     options: resolveSeq.intOptions,
-    stringify: (node) => intStringify(node, 8, "0o")
+    stringify: (node) => intStringify$1(node, 8, "0o")
   };
   var intObj = {
-    identify: intIdentify,
+    identify: intIdentify$2,
     default: true,
     tag: "tag:yaml.org,2002:int",
     test: /^[-+]?[0-9]+$/,
-    resolve: (str) => intResolve(str, str, 10),
+    resolve: (str) => intResolve$1(str, str, 10),
     options: resolveSeq.intOptions,
     stringify: resolveSeq.stringifyNumber
   };
   var hexObj = {
-    identify: (value) => intIdentify(value) && value >= 0,
+    identify: (value) => intIdentify$2(value) && value >= 0,
     default: true,
     tag: "tag:yaml.org,2002:int",
     format: "HEX",
     test: /^0x([0-9a-fA-F]+)$/,
-    resolve: (str, hex) => intResolve(str, hex, 16),
+    resolve: (str, hex) => intResolve$1(str, hex, 16),
     options: resolveSeq.intOptions,
-    stringify: (node) => intStringify(node, 16, "0x")
+    stringify: (node) => intStringify$1(node, 16, "0x")
   };
   var nanObj = {
     identify: (value) => typeof value === "number",
@@ -11826,8 +11881,8 @@ var require_Schema_42e9705c = __commonJS((exports2) => {
   var boolStringify = ({
     value
   }) => value ? resolveSeq.boolOptions.trueStr : resolveSeq.boolOptions.falseStr;
-  var intIdentify$2 = (value) => typeof value === "bigint" || Number.isInteger(value);
-  function intResolve$1(sign, src, radix) {
+  var intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
+  function intResolve(sign, src, radix) {
     let str = src.replace(/_/g, "");
     if (resolveSeq.intOptions.asBigInt) {
       switch (radix) {
@@ -11847,11 +11902,11 @@ var require_Schema_42e9705c = __commonJS((exports2) => {
     const n = parseInt(str, radix);
     return sign === "-" ? -1 * n : n;
   }
-  function intStringify$1(node, radix, prefix) {
+  function intStringify(node, radix, prefix) {
     const {
       value
     } = node;
-    if (intIdentify$2(value)) {
+    if (intIdentify(value)) {
       const str = value.toString(radix);
       return value < 0 ? "-" + prefix + str.substr(1) : prefix + str;
     }
@@ -11883,36 +11938,36 @@ var require_Schema_42e9705c = __commonJS((exports2) => {
     options: resolveSeq.boolOptions,
     stringify: boolStringify
   }, {
-    identify: intIdentify$2,
+    identify: intIdentify,
     default: true,
     tag: "tag:yaml.org,2002:int",
     format: "BIN",
     test: /^([-+]?)0b([0-1_]+)$/,
-    resolve: (str, sign, bin) => intResolve$1(sign, bin, 2),
-    stringify: (node) => intStringify$1(node, 2, "0b")
+    resolve: (str, sign, bin) => intResolve(sign, bin, 2),
+    stringify: (node) => intStringify(node, 2, "0b")
   }, {
-    identify: intIdentify$2,
+    identify: intIdentify,
     default: true,
     tag: "tag:yaml.org,2002:int",
     format: "OCT",
     test: /^([-+]?)0([0-7_]+)$/,
-    resolve: (str, sign, oct) => intResolve$1(sign, oct, 8),
-    stringify: (node) => intStringify$1(node, 8, "0")
+    resolve: (str, sign, oct) => intResolve(sign, oct, 8),
+    stringify: (node) => intStringify(node, 8, "0")
   }, {
-    identify: intIdentify$2,
+    identify: intIdentify,
     default: true,
     tag: "tag:yaml.org,2002:int",
     test: /^([-+]?)([0-9][0-9_]*)$/,
-    resolve: (str, sign, abs) => intResolve$1(sign, abs, 10),
+    resolve: (str, sign, abs) => intResolve(sign, abs, 10),
     stringify: resolveSeq.stringifyNumber
   }, {
-    identify: intIdentify$2,
+    identify: intIdentify,
     default: true,
     tag: "tag:yaml.org,2002:int",
     format: "HEX",
     test: /^([-+]?)0x([0-9a-fA-F_]+)$/,
-    resolve: (str, sign, hex) => intResolve$1(sign, hex, 16),
-    stringify: (node) => intStringify$1(node, 16, "0x")
+    resolve: (str, sign, hex) => intResolve(sign, hex, 16),
+    stringify: (node) => intStringify(node, 16, "0x")
   }, {
     identify: (value) => typeof value === "number",
     default: true,
@@ -11997,7 +12052,7 @@ var require_Schema_42e9705c = __commonJS((exports2) => {
     if (!tagObj) {
       if (typeof value.toJSON === "function")
         value = value.toJSON();
-      if (typeof value !== "object")
+      if (!value || typeof value !== "object")
         return wrapScalars ? new resolveSeq.Scalar(value) : value;
       tagObj = value instanceof Map ? map : value[Symbol.iterator] ? seq : map;
     }
@@ -12005,7 +12060,10 @@ var require_Schema_42e9705c = __commonJS((exports2) => {
       onTagObj(tagObj);
       delete ctx.onTagObj;
     }
-    const obj = {};
+    const obj = {
+      value: void 0,
+      node: void 0
+    };
     if (value && typeof value === "object" && prevObjects) {
       const prev = prevObjects.get(value);
       if (prev) {
@@ -12086,12 +12144,12 @@ var require_Schema_42e9705c = __commonJS((exports2) => {
   exports2.Schema = Schema;
 });
 
-// node_modules/yaml/dist/Document-2cf6b08c.js
-var require_Document_2cf6b08c = __commonJS((exports2) => {
+// node_modules/yaml/dist/Document-9b4560a1.js
+var require_Document_9b4560a1 = __commonJS((exports2) => {
   "use strict";
   var PlainValue = require_PlainValue_ec8e588e();
-  var resolveSeq = require_resolveSeq_4a68b39b();
-  var Schema = require_Schema_42e9705c();
+  var resolveSeq = require_resolveSeq_d03cb037();
+  var Schema = require_Schema_88e323a7();
   var defaultOptions = {
     anchorPrefix: "a",
     customTags: null,
@@ -12150,7 +12208,7 @@ var require_Document_2cf6b08c = __commonJS((exports2) => {
         prefix: "tag:private.yaml.org,2002:"
       }]
     },
-    "1.1": {
+    1.1: {
       schema: "yaml-1.1",
       merge: true,
       tagPrefixes: [{
@@ -12161,7 +12219,7 @@ var require_Document_2cf6b08c = __commonJS((exports2) => {
         prefix: PlainValue.defaultTagPrefix
       }]
     },
-    "1.2": {
+    1.2: {
       schema: "core",
       merge: false,
       tagPrefixes: [{
@@ -12278,7 +12336,7 @@ ${ctx.indent}${str}`;
       return node instanceof resolveSeq.Scalar || node instanceof resolveSeq.YAMLSeq || node instanceof resolveSeq.YAMLMap;
     }
     constructor(prefix) {
-      PlainValue._defineProperty(this, "map", {});
+      PlainValue._defineProperty(this, "map", Object.create(null));
       this.prefix = prefix;
     }
     createAlias(node, name) {
@@ -12726,7 +12784,7 @@ ${cbNode.commentBefore}` : cb;
         lines.unshift(this.commentBefore.replace(/^/gm, "#"));
       }
       const ctx = {
-        anchors: {},
+        anchors: Object.create(null),
         doc: this,
         indent: "",
         indentStep: " ".repeat(indentSize),
@@ -12766,12 +12824,12 @@ ${cbNode.commentBefore}` : cb;
 // node_modules/yaml/dist/index.js
 var require_dist = __commonJS((exports2) => {
   "use strict";
-  var PlainValue = require_PlainValue_ec8e588e();
   var parseCst = require_parse_cst();
-  require_resolveSeq_4a68b39b();
-  var Document$1 = require_Document_2cf6b08c();
-  var Schema = require_Schema_42e9705c();
-  var warnings = require_warnings_39684f17();
+  var Document$1 = require_Document_9b4560a1();
+  var Schema = require_Schema_88e323a7();
+  var PlainValue = require_PlainValue_ec8e588e();
+  var warnings = require_warnings_1000a372();
+  require_resolveSeq_d03cb037();
   function createNode(value, wrapScalars = true, tag) {
     if (tag === void 0 && typeof wrapScalars === "string") {
       tag = wrapScalars;
