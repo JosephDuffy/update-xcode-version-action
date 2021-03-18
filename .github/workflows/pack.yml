@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: github.event.issue.pull_request.head.ref
+          ref: ${{ github.event.issue.pull_request.head.ref }}
 
       - name: Read .node-version
         run: echo "##[set-output name=node-version;]$(cat .node-version)"
