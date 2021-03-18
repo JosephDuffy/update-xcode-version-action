@@ -38,8 +38,8 @@ jobs:
         with:
           script: |
             await github.reactions.createForIssueComment({
-              context.repo.owner,
-              context.repo.repo,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               comment_id: context.payload.comment.id,
               content: "+1"
             })
