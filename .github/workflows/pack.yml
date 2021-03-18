@@ -1,6 +1,8 @@
 name: Pack dist/index.js
 
-on: issue_comment
+on:
+  issue_comment:
+    types: [created, edited]
 
 jobs:
   pack_by_pr_comment:
@@ -31,6 +33,11 @@ jobs:
       - run: npm install
 
       - run: npm run pack
+
+      - name: Setup git user
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
 
       - run: git add dist/index.js
 
