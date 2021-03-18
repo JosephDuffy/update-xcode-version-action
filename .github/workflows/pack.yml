@@ -5,7 +5,7 @@ on: issue_comment
 jobs:
   pack_by_pr_comment:
     name: Pack dist/index.js
-    if: ${{ github.event.issue.pull_request && contains(github.event.issue.comment, '@github-actions pack') }}
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '@github-actions pack') }}
     runs-on: ubuntu-latest
 
     steps:
