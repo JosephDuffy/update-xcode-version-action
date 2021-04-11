@@ -37,7 +37,7 @@
     "yaml": "^1.10.2"
   },
   "devDependencies": {
-    "@types/eslint": "^7.2.8",
+    "@types/eslint": "^7.2.9",
     "@types/jest": "^26.0.22",
     "@types/node": "~12.19",
     "@typescript-eslint/parser": "^4.21.0",
