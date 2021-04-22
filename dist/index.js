@@ -228,6 +228,7 @@ var require_core = __commonJS((exports) => {
   }
   exports.getInput = getInput2;
   function setOutput(name, value) {
+    process.stdout.write(os.EOL);
     command_1.issueCommand("set-output", {name}, value);
   }
   exports.setOutput = setOutput;
