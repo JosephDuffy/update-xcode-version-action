@@ -1279,12 +1279,6 @@ var require_before_after_hook = __commonJS((exports, module2) => {
 var require_is_plain_object = __commonJS((exports) => {
   "use strict";
   Object.defineProperty(exports, "__esModule", {value: true});
-  /*!
-   * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
-   *
-   * Copyright (c) 2014-2017, Jon Schlinkert.
-   * Released under the MIT License.
-   */
   function isObject(o) {
     return Object.prototype.toString.call(o) === "[object Object]";
   }
@@ -13215,3 +13209,9 @@ if (process.env.NODE_ENV !== "test") {
 0 && (module.exports = {
   run
 });
+/*!
+ * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
