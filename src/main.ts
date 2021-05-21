@@ -130,7 +130,7 @@ export async function run(): Promise<void> {
         core.debug("Pushed branch")
       }
 
-      const pullRequests = await octokit.pulls.list({
+      const pullRequests = await octokit.rest.pulls.list({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         head: `${github.context.repo.owner}:update-xcode-version-action/update-xcode-versions`,
@@ -175,7 +175,7 @@ export async function run(): Promise<void> {
           )}`
         )
 
-        const response = await octokit.pulls.create(createParameters)
+        const response = await octokit.rest.pulls.create(createParameters)
 
         core.info(`Create pull request at ${response.data.html_url}`)
       }
