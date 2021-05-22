@@ -96,9 +96,9 @@ export async function run(): Promise<void> {
       ])
       await exec("git", ["config", "--local", "user.name", "GitHub Action"])
 
-      const baseBranchName = (
-        process.env.GITHUB_HEAD_REF ?? github.context.ref
-      ).slice("refs/heads/".length)
+      const baseBranchName =
+        process.env.GITHUB_HEAD_REF ??
+        github.context.ref.slice("refs/heads/".length)
 
       const octokit = github.getOctokit(githubToken)
 
