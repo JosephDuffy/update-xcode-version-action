@@ -96,6 +96,9 @@ export async function run(): Promise<void> {
       ])
       await exec("git", ["config", "--local", "user.name", "GitHub Action"])
 
+      core.debug(`github.context: ${github.context}`)
+      core.debug(`github: ${github}`)
+
       const baseBranchName = (
         github.context.head_ref ?? github.context.ref
       ).slice("refs/heads/".length)

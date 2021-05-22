@@ -1481,8 +1481,8 @@ var require_dist_node2 = __commonJS({
     function isKeyOperator(operator) {
       return operator === ";" || operator === "&" || operator === "?";
     }
-    function getValues(context2, operator, key, modifier) {
-      var value = context2[key], result = [];
+    function getValues(context, operator, key, modifier) {
+      var value = context[key], result = [];
       if (isDefined(value) && value !== "") {
         if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
           value = value.toString();
@@ -1542,7 +1542,7 @@ var require_dist_node2 = __commonJS({
         expand: expand.bind(null, template)
       };
     }
-    function expand(template, context2) {
+    function expand(template, context) {
       var operators = ["+", "#", ".", "/", ";", "?", "&"];
       return template.replace(/\{([^\{\}]+)\}|([^\{\}]+)/g, function(_, expression, literal) {
         if (expression) {
@@ -1554,7 +1554,7 @@ var require_dist_node2 = __commonJS({
           }
           expression.split(/,/g).forEach(function(variable) {
             var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
-            values.push(getValues(context2, operator, tmp[1], tmp[2] || tmp[3]));
+            values.push(getValues(context, operator, tmp[1], tmp[2] || tmp[3]));
           });
           if (operator && operator !== "+") {
             var separator = ",";
@@ -4644,10 +4644,10 @@ var require_github = __commonJS({
     var Context = __importStar(require_context());
     var utils_1 = require_utils3();
     exports.context = new Context.Context();
-    function getOctokit2(token, options) {
+    function getOctokit(token, options) {
       return new utils_1.GitHub(utils_1.getOctokitOptions(token, options));
     }
-    exports.getOctokit = getOctokit2;
+    exports.getOctokit = getOctokit;
   }
 });
 
@@ -8305,9 +8305,9 @@ ${offset}${err}${errEnd}`;
           error: error3
         };
       }
-      constructor(type, props, context2) {
+      constructor(type, props, context) {
         Object.defineProperty(this, "context", {
-          value: context2 || null,
+          value: context || null,
           writable: true
         });
         this.error = null;
@@ -8660,12 +8660,12 @@ ${ctx}
         this.valueRange.end = valueEnd;
         return valueEnd;
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         const {
           inFlow,
           src
-        } = context2;
+        } = context;
         let offset = start;
         const ch = src[offset];
         if (ch && ch !== "#" && ch !== "\n") {
@@ -8708,8 +8708,8 @@ var require_parse_cst = __commonJS({
       get includesTrailingLines() {
         return true;
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         this.range = new PlainValue.Range(start, start + 1);
         return start + 1;
       }
@@ -8722,19 +8722,19 @@ var require_parse_cst = __commonJS({
       get includesTrailingLines() {
         return !!this.node && this.node.includesTrailingLines;
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         const {
           parseNode,
           src
-        } = context2;
+        } = context;
         let {
           atLineStart,
           lineStart
-        } = context2;
+        } = context;
         if (!atLineStart && this.type === PlainValue.Type.SEQ_ITEM)
           this.error = new PlainValue.YAMLSemanticError(this, "Sequence items must not have preceding content on the same line");
-        const indent = atLineStart ? start - lineStart : context2.indent;
+        const indent = atLineStart ? start - lineStart : context.indent;
         let offset = PlainValue.Node.endOfWhiteSpace(src, start + 1);
         let ch = src[offset];
         const inlineComment = ch === "#";
@@ -8772,7 +8772,7 @@ var require_parse_cst = __commonJS({
         }
         if (this.node) {
           if (blankLine) {
-            const items = context2.parent.items || context2.parent.contents;
+            const items = context.parent.items || context.parent.contents;
             if (items)
               items.push(blankLine);
           }
@@ -8815,8 +8815,8 @@ var require_parse_cst = __commonJS({
       constructor() {
         super(PlainValue.Type.COMMENT);
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         const offset = this.parseComment(start);
         this.range = new PlainValue.Range(start, offset);
         return offset;
@@ -8891,12 +8891,12 @@ var require_parse_cst = __commonJS({
       get includesTrailingLines() {
         return this.items.length > 0;
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         const {
           parseNode,
           src
-        } = context2;
+        } = context;
         let lineStart = PlainValue.Node.startOfLine(src, start);
         const firstItem = this.items[0];
         firstItem.context.parent = this;
@@ -9071,8 +9071,8 @@ var require_parse_cst = __commonJS({
         this.valueRange = new PlainValue.Range(start, offset);
         return offset;
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         let offset = this.parseName(start + 1);
         offset = this.parseParameters(offset);
         offset = this.parseComment(offset);
@@ -9204,7 +9204,7 @@ var require_parse_cst = __commonJS({
               break;
             default: {
               const iEnd = PlainValue.Node.endOfIndent(src, offset);
-              const context2 = {
+              const context = {
                 atLineStart,
                 indent: -1,
                 inFlow: false,
@@ -9212,7 +9212,7 @@ var require_parse_cst = __commonJS({
                 lineStart,
                 parent: this
               };
-              const node = parseNode(context2, iEnd);
+              const node = parseNode(context, iEnd);
               if (!node)
                 return this.valueRange.end = iEnd;
               this.contents.push(node);
@@ -9251,12 +9251,12 @@ var require_parse_cst = __commonJS({
         }
         return offset;
       }
-      parse(context2, start) {
-        context2.root = this;
-        this.context = context2;
+      parse(context, start) {
+        context.root = this;
+        this.context = context;
         const {
           src
-        } = context2;
+        } = context;
         let offset = src.charCodeAt(start) === 65279 ? start + 1 : start;
         offset = this.parseDirectives(offset);
         offset = this.parseContents(offset);
@@ -9296,11 +9296,11 @@ var require_parse_cst = __commonJS({
       }
     };
     var Alias = class extends PlainValue.Node {
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         const {
           src
-        } = context2;
+        } = context;
         let offset = PlainValue.Node.endOfIdentifier(src, start + 1);
         this.valueRange = new PlainValue.Range(start + 1, offset);
         offset = PlainValue.Node.endOfWhiteSpace(src, offset);
@@ -9484,11 +9484,11 @@ var require_parse_cst = __commonJS({
         this.valueRange = new PlainValue.Range(start + 1, offset);
         return offset;
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         const {
           src
-        } = context2;
+        } = context;
         let offset = this.parseBlockHeader(start);
         offset = PlainValue.Node.endOfWhiteSpace(src, offset);
         offset = this.parseComment(offset);
@@ -9509,16 +9509,16 @@ var require_parse_cst = __commonJS({
         const node = this.items[idx - 1];
         return !!node && (node.jsonLike || node.type === PlainValue.Type.COMMENT && this.prevNodeIsJsonLike(idx - 1));
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         const {
           parseNode,
           src
-        } = context2;
+        } = context;
         let {
           indent,
           lineStart
-        } = context2;
+        } = context;
         let char = src[start];
         this.items = [{
           char,
@@ -9803,11 +9803,11 @@ var require_parse_cst = __commonJS({
         }
         return String.fromCodePoint(code);
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         const {
           src
-        } = context2;
+        } = context;
         let offset = QuoteDouble.endOfQuote(src, start + 1);
         this.valueRange = new PlainValue.Range(start, offset);
         offset = PlainValue.Node.endOfWhiteSpace(src, offset);
@@ -9881,11 +9881,11 @@ var require_parse_cst = __commonJS({
           str
         } : str;
       }
-      parse(context2, start) {
-        this.context = context2;
+      parse(context, start) {
+        this.context = context;
         const {
           src
-        } = context2;
+        } = context;
         let offset = QuoteSingle.endOfQuote(src, start + 1);
         this.valueRange = new PlainValue.Range(start, offset);
         offset = PlainValue.Node.endOfWhiteSpace(src, offset);
@@ -9956,14 +9956,14 @@ var require_parse_cst = __commonJS({
         PlainValue._defineProperty(this, "parseNode", (overlay, start) => {
           if (PlainValue.Node.atDocumentBoundary(this.src, start))
             return null;
-          const context2 = new ParseContext(this, overlay);
+          const context = new ParseContext(this, overlay);
           const {
             props,
             type,
             valueStart
-          } = context2.parseProps(start);
+          } = context.parseProps(start);
           const node = createNewNode(type, props);
-          let offset = node.parse(context2, valueStart);
+          let offset = node.parse(context, valueStart);
           node.range = new PlainValue.Range(start, offset);
           if (offset <= start) {
             node.error = new Error(`Node#parse consumed no characters`);
@@ -9971,12 +9971,12 @@ var require_parse_cst = __commonJS({
             node.error.source = node;
             node.range.end = start + 1;
           }
-          if (context2.nodeStartsCollection(node)) {
-            if (!node.error && !context2.atLineStart && context2.parent.type === PlainValue.Type.DOCUMENT) {
+          if (context.nodeStartsCollection(node)) {
+            if (!node.error && !context.atLineStart && context.parent.type === PlainValue.Type.DOCUMENT) {
               node.error = new PlainValue.YAMLSyntaxError(node, "Block collection must not have preceding content here (e.g. directives-end indicator)");
             }
             const collection = new Collection(node);
-            offset = collection.parse(new ParseContext(context2), offset);
+            offset = collection.parse(new ParseContext(context), offset);
             collection.range = new PlainValue.Range(start, offset);
             return collection;
           }
@@ -10071,10 +10071,10 @@ var require_parse_cst = __commonJS({
       let offset = 0;
       do {
         const doc = new Document();
-        const context2 = new ParseContext({
+        const context = new ParseContext({
           src
         });
-        offset = doc.parse(context2, offset);
+        offset = doc.parse(context, offset);
         documents.push(doc);
       } while (offset < src.length);
       documents.setOrigRanges = () => {
@@ -13885,6 +13885,8 @@ async function run() {
         "action@github.com"
       ]);
       await (0, import_exec2.exec)("git", ["config", "--local", "user.name", "GitHub Action"]);
+      core3.debug(`github.context: ${github.context}`);
+      core3.debug(`github: ${github}`);
       const baseBranchName = ((_a = github.context.head_ref) != null ? _a : github.context.ref).slice("refs/heads/".length);
       const octokit = github.getOctokit(githubToken);
       const commitAndPushChanges = async () => {
