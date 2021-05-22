@@ -61,7 +61,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-
 
-      - run: npm install
+      - run: npm ci
 
       - run: npm run pack
 

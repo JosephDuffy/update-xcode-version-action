@@ -31,7 +31,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-
 
-      - run: npm install
+      - run: npm ci
 
       - run: pip3 install -r requirements.txt
 
@@ -61,11 +61,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-
+            ${{ runner.os }}-npm-
 
-      - run: npm install
+      - run: npm ci
 
       - run: npm run pack
 
@@ -91,11 +91,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-
+            ${{ runner.os }}-npm-
 
-      - run: npm install
+      - run: npm ci
 
       - run: npm run checkTypes
 
@@ -122,10 +122,18 @@ jobs:
             exit 1
           fi
 
+      - name: Cache NPM
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - run: npm ci
+
       - name: Check and close PR
-        run: |
-          npm ci
-          node ./scripts/check-and-close-pr.mjs
+        run: node ./scripts/check-and-close-pr.mjs
         env:
           PULL_REQUEST_ID: ${{ steps.update-xcode-version.outputs.pull-request-id }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
