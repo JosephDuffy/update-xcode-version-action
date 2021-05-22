@@ -13837,6 +13837,7 @@ function generateBadge(badgePath, versions, versionResolver) {
 
 // src/main.ts
 async function run() {
+  var _a;
   try {
     const workspacePath = process.env["GITHUB_WORKSPACE"];
     if (workspacePath === void 0) {
@@ -13884,7 +13885,7 @@ async function run() {
         "action@github.com"
       ]);
       await (0, import_exec2.exec)("git", ["config", "--local", "user.name", "GitHub Action"]);
-      const baseBranchName = github.context.ref.slice("refs/heads/".length);
+      const baseBranchName = ((_a = github.context.head_ref) != null ? _a : github.context.ref).slice("refs/heads/".length);
       const octokit = github.getOctokit(githubToken);
       const commitAndPushChanges = async () => {
         await (0, import_exec2.exec)("git", [
