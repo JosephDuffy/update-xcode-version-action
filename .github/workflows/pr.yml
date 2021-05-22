@@ -22,7 +22,15 @@ jobs:
         with:
           node-version: "${{ steps.node-version.outputs.node-version }}"
 
-      - run: npm install
+      - name: Cache NPM
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - run: npm ci
       - run: npm run format:check
 
   lint:
@@ -44,5 +52,13 @@ jobs:
         with:
           node-version: "${{ steps.node-version.outputs.node-version }}"
 
-      - run: npm install
+      - name: Cache NPM
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - run: npm ci
       - run: npm run lint

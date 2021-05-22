@@ -253,11 +253,11 @@ var require_core = __commonJS({
       return val.trim();
     }
     exports.getInput = getInput2;
-    function setOutput(name, value) {
+    function setOutput2(name, value) {
       process.stdout.write(os.EOL);
       command_1.issueCommand("set-output", { name }, value);
     }
-    exports.setOutput = setOutput;
+    exports.setOutput = setOutput2;
     function setCommandEcho(enabled) {
       command_1.issue("echo", enabled ? "on" : "off");
     }
@@ -13837,6 +13837,7 @@ function generateBadge(badgePath, versions, versionResolver) {
 
 // src/main.ts
 async function run() {
+  var _a;
   try {
     const workspacePath = process.env["GITHUB_WORKSPACE"];
     if (workspacePath === void 0) {
@@ -13884,14 +13885,7 @@ async function run() {
         "action@github.com"
       ]);
       await (0, import_exec2.exec)("git", ["config", "--local", "user.name", "GitHub Action"]);
-      let baseBranchName = "";
-      await (0, import_exec2.exec)("git", ["branch", "--show-current"], {
-        listeners: {
-          stdout: (buffer) => {
-            baseBranchName += buffer.toString("utf8").replace(/\n$/, "");
-          }
-        }
-      });
+      const baseBranchName = (_a = process.env.GITHUB_HEAD_REF) != null ? _a : github.context.ref.slice("refs/heads/".length);
       const octokit = github.getOctokit(githubToken);
       const commitAndPushChanges = async () => {
         await (0, import_exec2.exec)("git", [
@@ -13927,6 +13921,8 @@ async function run() {
         } else {
           core3.info(`Pull request exists at ${pullRequest.html_url}. Pushing changes.`);
           await commitAndPushChanges();
+          core3.setOutput("pull-request-url", pullRequest.html_url);
+          core3.setOutput("pull-request-id", pullRequest.number);
         }
       } else {
         await commitAndPushChanges();
@@ -13940,6 +13936,8 @@ async function run() {
         core3.debug(`Attempting to create a pull request with parameters:${JSON.stringify(createParameters)}`);
         const response = await octokit.rest.pulls.create(createParameters);
         core3.info(`Create pull request at ${response.data.html_url}`);
+        core3.setOutput("pull-request-url", response.data.html_url);
+        core3.setOutput("pull-request-id", response.data.number);
       }
     }
   } catch (error3) {
