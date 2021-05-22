@@ -13885,7 +13885,7 @@ async function run() {
         "action@github.com"
       ]);
       await (0, import_exec2.exec)("git", ["config", "--local", "user.name", "GitHub Action"]);
-      const baseBranchName = (_a = process.env.GITHUB_HEAD_REF) != null ? _a : github.context.ref.slice("refs/heads/".length);
+      const baseBranchName = (_a = process.env.GITHUB_HEAD_REF && process.env.GITHUB_HEAD_REF.length > 0 ? process.env.GITHUB_HEAD_REF : void 0) != null ? _a : github.context.ref.slice("refs/heads/".length);
       const octokit = github.getOctokit(githubToken);
       const commitAndPushChanges = async () => {
         await (0, import_exec2.exec)("git", [
