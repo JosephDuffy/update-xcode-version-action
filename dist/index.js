@@ -13922,7 +13922,7 @@ async function run() {
           core3.info(`Pull request exists at ${pullRequest.html_url}. Pushing changes.`);
           await commitAndPushChanges();
           core3.setOutput("pull-request-url", pullRequest.html_url);
-          core3.setOutput("pull-request-id", pullRequest.id);
+          core3.setOutput("pull-request-id", pullRequest.number);
         }
       } else {
         await commitAndPushChanges();
@@ -13937,7 +13937,7 @@ async function run() {
         const response = await octokit.rest.pulls.create(createParameters);
         core3.info(`Create pull request at ${response.data.html_url}`);
         core3.setOutput("pull-request-url", response.data.html_url);
-        core3.setOutput("pull-request-id", response.data.id);
+        core3.setOutput("pull-request-id", response.data.number);
       }
     }
   } catch (error3) {

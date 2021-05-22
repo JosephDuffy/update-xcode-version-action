@@ -154,7 +154,7 @@ export async function run(): Promise<void> {
           await commitAndPushChanges()
 
           core.setOutput("pull-request-url", pullRequest.html_url)
-          core.setOutput("pull-request-id", pullRequest.id)
+          core.setOutput("pull-request-id", pullRequest.number)
         }
       } else {
         await commitAndPushChanges()
@@ -178,7 +178,7 @@ export async function run(): Promise<void> {
         core.info(`Create pull request at ${response.data.html_url}`)
 
         core.setOutput("pull-request-url", response.data.html_url)
-        core.setOutput("pull-request-id", response.data.id)
+        core.setOutput("pull-request-id", response.data.number)
       }
     }
   } catch (error) {
