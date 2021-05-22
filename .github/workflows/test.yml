@@ -123,7 +123,9 @@ jobs:
           fi
 
       - name: Check and close PR
-        run: node ./scripts/check-and-close-pr.mjs
+        run: |
+          npm ci
+          node ./scripts/check-and-close-pr.mjs
         env:
           PULL_REQUEST_ID: ${{ steps.update-xcode-version.outputs.pull-request-id }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
