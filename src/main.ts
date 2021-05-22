@@ -157,6 +157,9 @@ export async function run(): Promise<void> {
           )
 
           await commitAndPushChanges()
+
+          core.setOutput("pull-request-url", pullRequest.html_url)
+          core.setOutput("pull-request-id", pullRequest.id)
         }
       } else {
         await commitAndPushChanges()
@@ -178,6 +181,9 @@ export async function run(): Promise<void> {
         const response = await octokit.rest.pulls.create(createParameters)
 
         core.info(`Create pull request at ${response.data.html_url}`)
+
+        core.setOutput("pull-request-url", response.data.html_url)
+        core.setOutput("pull-request-id", response.data.id)
       }
     }
   } catch (error) {

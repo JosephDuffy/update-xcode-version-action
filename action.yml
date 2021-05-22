@@ -19,6 +19,11 @@ inputs:
   quotes:
     describes: "Which types of quotes to use when modifying the YAML."
     default: "double"
+outputs:
+  pull-request-url:
+    description: The URL to the created/updated pull request
+  pull-request-id:
+    description: The ID of the created/updated pull request
 runs:
   using: "node12"
   main: "dist/index.js"
