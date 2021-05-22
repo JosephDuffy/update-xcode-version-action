@@ -96,14 +96,7 @@ export async function run(): Promise<void> {
       ])
       await exec("git", ["config", "--local", "user.name", "GitHub Action"])
 
-      let baseBranchName = ""
-      await exec("git", ["branch", "--show-current"], {
-        listeners: {
-          stdout: (buffer) => {
-            baseBranchName += buffer.toString("utf8").replace(/\n$/, "")
-          },
-        },
-      })
+      const baseBranchName = github.context.ref.slice("refs/heads/".length)
 
       const octokit = github.getOctokit(githubToken)
 

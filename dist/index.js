@@ -13884,14 +13884,7 @@ async function run() {
         "action@github.com"
       ]);
       await (0, import_exec2.exec)("git", ["config", "--local", "user.name", "GitHub Action"]);
-      let baseBranchName = "";
-      await (0, import_exec2.exec)("git", ["branch", "--show-current"], {
-        listeners: {
-          stdout: (buffer) => {
-            baseBranchName += buffer.toString("utf8").replace(/\n$/, "");
-          }
-        }
-      });
+      const baseBranchName = github.context.ref.slice("refs/heads/".length);
       const octokit = github.getOctokit(githubToken);
       const commitAndPushChanges = async () => {
         await (0, import_exec2.exec)("git", [
