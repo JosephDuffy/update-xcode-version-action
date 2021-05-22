@@ -31,7 +31,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-
 
-      - run: npm install
+      - run: npm ci
 
       - run: pip3 install -r requirements.txt
 
@@ -61,11 +61,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-
+            ${{ runner.os }}-npm-
 
-      - run: npm install
+      - run: npm ci
 
       - run: npm run pack
 
@@ -91,11 +91,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-npm-node_v${{ steps.node-version.outputs.node-version }}-
+            ${{ runner.os }}-npm-
 
-      - run: npm install
+      - run: npm ci
 
       - run: npm run checkTypes
 
@@ -106,6 +106,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Run action against test data
+        id: update-xcode-version
         uses: ./
         with:
           xcode-versions-file: ./src/__tests__/xcode-versions.yml
@@ -115,7 +116,24 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate run
+        continue-on-error: true
         run: |
           if ! diff ./src/__tests__/workflows/input.yml ./src/__tests__/workflows/output-double-quotes.yml; then
             exit 1
           fi
+
+      - name: Cache NPM
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      - run: npm ci
+
+      - name: Check and close PR
+        run: node ./scripts/check-and-close-pr.mjs
+        env:
+          PULL_REQUEST_ID: ${{ steps.update-xcode-version.outputs.pull-request-id }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
