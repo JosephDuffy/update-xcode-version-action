@@ -40,7 +40,7 @@
     "@types/eslint": "^7.2.11",
     "@types/jest": "^26.0.23",
     "@types/node": "~12.19",
-    "@typescript-eslint/parser": "^4.24.0",
+    "@typescript-eslint/parser": "^4.27.0",
     "esbuild": "^0.12.1",
     "eslint": "^7.26.0",
     "eslint-plugin-github": "^4.1.3",
