@@ -13888,22 +13888,33 @@ async function run() {
       const baseBranchName = (_a = process.env.GITHUB_HEAD_REF && process.env.GITHUB_HEAD_REF.length > 0 ? process.env.GITHUB_HEAD_REF : void 0) != null ? _a : github.context.ref.slice("refs/heads/".length);
       const octokit = github.getOctokit(githubToken);
       const commitAndPushChanges = async () => {
-        await (0, import_exec2.exec)("git", [
-          "checkout",
-          "-b",
-          "update-xcode-version-action/update-xcode-versions"
-        ]);
+        const branchName = "update-xcode-version-action/update-xcode-versions";
+        await (0, import_exec2.exec)("git", ["checkout", "-b", branchName]);
         core3.debug("Created branch");
         await (0, import_exec2.exec)("git", ["add", "."]);
         core3.debug("Staged all changes");
         await (0, import_exec2.exec)("git", ["commit", "-m", "Update Xcode Versions"]);
         core3.debug("Created commit");
-        await (0, import_exec2.exec)("git", [
-          "push",
-          "--force",
+        const branchExists = await (0, import_exec2.exec)("git", [
+          "ls-remote",
+          "--exit-code",
+          "--heads",
           "origin",
-          "update-xcode-version-action/update-xcode-versions"
-        ]);
+          branchName
+        ]) === 0;
+        if (branchExists) {
+          const contentsDiffer = await (0, import_exec2.exec)("git", [
+            "diff",
+            "--exit-code",
+            "branchName",
+            `origin/${branchName}`
+          ]) === 1;
+          if (!contentsDiffer) {
+            core3.debug("Existing branch has matching content -- no need to update.");
+            return;
+          }
+        }
+        await (0, import_exec2.exec)("git", ["push", "--force", "origin", branchName]);
         core3.debug("Pushed branch");
       };
       const pullRequests = await octokit.rest.pulls.list({

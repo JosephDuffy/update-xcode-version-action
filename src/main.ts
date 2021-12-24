@@ -104,11 +104,8 @@ export async function run(): Promise<void> {
       const octokit = github.getOctokit(githubToken)
 
       const commitAndPushChanges = async () => {
-        await exec("git", [
-          "checkout",
-          "-b",
-          "update-xcode-version-action/update-xcode-versions",
-        ])
+        const branchName = "update-xcode-version-action/update-xcode-versions"
+        await exec("git", ["checkout", "-b", branchName])
         core.debug("Created branch")
 
         await exec("git", ["add", "."])
@@ -117,12 +114,33 @@ export async function run(): Promise<void> {
         await exec("git", ["commit", "-m", "Update Xcode Versions"])
         core.debug("Created commit")
 
-        await exec("git", [
-          "push",
-          "--force",
-          "origin",
-          "update-xcode-version-action/update-xcode-versions",
-        ])
+        const branchExists =
+          (await exec("git", [
+            "ls-remote",
+            "--exit-code",
+            "--heads",
+            "origin",
+            branchName,
+          ])) === 0
+
+        if (branchExists) {
+          const contentsDiffer =
+            (await exec("git", [
+              "diff",
+              "--exit-code",
+              "branchName",
+              `origin/${branchName}`,
+            ])) === 1
+
+          if (!contentsDiffer) {
+            core.debug(
+              "Existing branch has matching content -- no need to update."
+            )
+            return
+          }
+        }
+
+        await exec("git", ["push", "--force", "origin", branchName])
         core.debug("Pushed branch")
       }
 
