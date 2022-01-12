@@ -13904,6 +13904,7 @@ async function run() {
         ]) === 0;
         if (branchExists) {
           await (0, import_exec2.exec)("git", [
+            "fetch",
             "origin",
             `${branchName}:refs/remotes/origin/${branchName}`
           ]);

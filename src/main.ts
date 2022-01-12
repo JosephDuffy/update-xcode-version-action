@@ -125,6 +125,7 @@ export async function run(): Promise<void> {
 
         if (branchExists) {
           await exec("git", [
+            "fetch",
             "origin",
             `${branchName}:refs/remotes/origin/${branchName}`,
           ])
