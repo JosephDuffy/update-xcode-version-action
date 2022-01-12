@@ -13906,7 +13906,6 @@ async function run() {
           const contentsDiffer = await (0, import_exec2.exec)("git", [
             "diff",
             "--exit-code",
-            branchName,
             `origin/${branchName}`
           ]) === 1;
           if (!contentsDiffer) {
