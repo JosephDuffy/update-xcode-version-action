@@ -122,6 +122,26 @@ jobs:
             exit 1
           fi
 
+      - name: Check commit
+        id: check-commit
+        run: echo "##[set-output name=commit-hash;]$(git rev-parse HEAD)"
+
+      - name: Run action against test data again
+        uses: ./
+        with:
+          xcode-versions-file: ./src/__tests__/xcode-versions.yml
+          xcode-search-path: ./src/__tests__/Xcodes
+          xcode-version-badge-versions: "last-major, latest,beta"
+          xcode-version-badge-path: ./.github/xcode-versions-badge.svg
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check did not commit again
+        continue-on-error: true
+        run: |
+          if [ "${{ steps.check-commit.outputs.commit-hash }}" != "$(git rev-parse HEAD)" ]; then
+            exit 1
+          fi
+
       - name: Cache NPM
         uses: actions/cache@v2
         with:
