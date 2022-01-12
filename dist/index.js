@@ -13908,11 +13908,7 @@ async function run() {
             "origin",
             `${branchName}:refs/remotes/origin/${branchName}`
           ]);
-          const contentsDiffer = await (0, import_exec2.exec)("git", [
-            "diff",
-            "--exit-code",
-            `origin/${branchName}`
-          ]) === 1;
+          const contentsDiffer = await (0, import_exec2.exec)("git", ["diff", "--exit-code", `origin/${branchName}`], { ignoreReturnCode: true }) === 1;
           if (!contentsDiffer) {
             core3.debug("Existing branch has matching content -- no need to update.");
             return;

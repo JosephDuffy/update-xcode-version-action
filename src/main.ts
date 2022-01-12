@@ -131,11 +131,11 @@ export async function run(): Promise<void> {
           ])
 
           const contentsDiffer =
-            (await exec("git", [
-              "diff",
-              "--exit-code",
-              `origin/${branchName}`,
-            ])) === 1
+            (await exec(
+              "git",
+              ["diff", "--exit-code", `origin/${branchName}`],
+              { ignoreReturnCode: true }
+            )) === 1
 
           if (!contentsDiffer) {
             core.debug(
