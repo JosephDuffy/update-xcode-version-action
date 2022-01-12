@@ -13903,6 +13903,10 @@ async function run() {
           branchName
         ]) === 0;
         if (branchExists) {
+          await (0, import_exec2.exec)("git", [
+            "origin",
+            `${branchName}:refs/remotes/origin/${branchName}`
+          ]);
           const contentsDiffer = await (0, import_exec2.exec)("git", [
             "diff",
             "--exit-code",

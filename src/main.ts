@@ -124,6 +124,11 @@ export async function run(): Promise<void> {
           ])) === 0
 
         if (branchExists) {
+          await exec("git", [
+            "origin",
+            `${branchName}:refs/remotes/origin/${branchName}`,
+          ])
+
           const contentsDiffer =
             (await exec("git", [
               "diff",
