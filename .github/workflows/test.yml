@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     name: Run JS Tests
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -44,7 +44,7 @@ jobs:
 
   check-has-built:
     name: Check Has Been Built
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -74,7 +74,7 @@ jobs:
 
   check-types:
     name: Check Types
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -101,7 +101,7 @@ jobs:
 
   test-action:
     name: Test Action Run
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
