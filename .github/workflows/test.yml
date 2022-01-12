@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     name: Run JS Tests
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -44,7 +44,7 @@ jobs:
 
   check-has-built:
     name: Check Has Been Built
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -74,7 +74,7 @@ jobs:
 
   check-types:
     name: Check Types
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -101,7 +101,7 @@ jobs:
 
   test-action:
     name: Test Action Run
-    runs-on: macOS-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -119,6 +119,26 @@ jobs:
         continue-on-error: true
         run: |
           if ! diff ./src/__tests__/workflows/input.yml ./src/__tests__/workflows/output-double-quotes.yml; then
+            exit 1
+          fi
+
+      - name: Check commit
+        id: check-commit
+        run: echo "##[set-output name=commit-hash;]$(git rev-parse HEAD)"
+
+      - name: Run action against test data again
+        uses: ./
+        with:
+          xcode-versions-file: ./src/__tests__/xcode-versions.yml
+          xcode-search-path: ./src/__tests__/Xcodes
+          xcode-version-badge-versions: "last-major, latest,beta"
+          xcode-version-badge-path: ./.github/xcode-versions-badge.svg
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check did not commit again
+        continue-on-error: true
+        run: |
+          if [ "${{ steps.check-commit.outputs.commit-hash }}" != "$(git rev-parse HEAD)" ]; then
             exit 1
           fi
 

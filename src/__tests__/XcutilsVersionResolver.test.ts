@@ -1,7 +1,7 @@
 import { mocked } from "ts-jest/utils"
 import XcutilsVersionResolver from "../XcutilsVersionResolver"
 import { addPath } from "@actions/core"
-import { downloadTool, extractZip } from "@actions/tool-cache"
+import { downloadTool, extractZip, find, cacheDir } from "@actions/tool-cache"
 import { exec, ExecOptions } from "@actions/exec"
 import XcodeVersion from "../XcodeVersion"
 jest.mock("@actions/core")
@@ -11,12 +11,16 @@ const mockedAddPath = mocked(addPath, true)
 const mockedDownloadTool = mocked(downloadTool, true)
 const mockedExtractZip = mocked(extractZip, true)
 const mockedExec = mocked(exec, true)
+const mockedFind = mocked(find, true)
+const mockedCacheDir = mocked(cacheDir, true)
 
 afterEach(() => {
   mockedAddPath.mockReset()
   mockedDownloadTool.mockReset()
   mockedExtractZip.mockReset()
   mockedExec.mockReset()
+  mockedFind.mockReset()
+  mockedCacheDir.mockReset()
 })
 
 test("resolving to a single version", async () => {
@@ -26,6 +30,8 @@ test("resolving to a single version", async () => {
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
   mockedAddPath.mockReturnValue()
+  mockedFind.mockReturnValue("")
+  mockedCacheDir.mockResolvedValue(extractedDirectory)
   const mockVersions: XcodeVersion[] = [
     {
       path: "/Applications/Xcode_11.5.app",
@@ -83,6 +89,8 @@ test("resolving to no versions", async () => {
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
   mockedAddPath.mockReturnValue()
+  mockedFind.mockReturnValue("")
+  mockedCacheDir.mockResolvedValue(extractedDirectory)
 
   mockedExec.mockImplementation(
     async (
@@ -131,6 +139,8 @@ test("resolving multiple times", async () => {
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
   mockedAddPath.mockReturnValue()
+  mockedFind.mockReturnValue("")
+  mockedCacheDir.mockResolvedValue(extractedDirectory)
   const mockVersions: XcodeVersion[] = [
     {
       path: "/Applications/Xcode_11.5.app",
@@ -191,6 +201,8 @@ test("resolving version without Xcode_ in path", async () => {
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
   mockedAddPath.mockReturnValue()
+  mockedFind.mockReturnValue("")
+  mockedCacheDir.mockResolvedValue(extractedDirectory)
   const xcodePath = "/Applications/Xcode-11.5.app"
   const mockVersions: XcodeVersion[] = [
     {
@@ -250,6 +262,8 @@ test("resolving version without .app in path", async () => {
   mockedDownloadTool.mockResolvedValue(downloadedToolPath)
   mockedExtractZip.mockResolvedValue(extractedDirectory)
   mockedAddPath.mockReturnValue()
+  mockedFind.mockReturnValue("")
+  mockedCacheDir.mockResolvedValue(extractedDirectory)
   const xcodePath = "/Applications/Xcode_11.5.xip"
   const mockVersions: XcodeVersion[] = [
     {
