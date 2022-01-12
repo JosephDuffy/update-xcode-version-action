@@ -2087,7 +2087,7 @@ var require_lib = __commonJS({
         throw new TypeError(`${value} is not a legal HTTP header value`);
       }
     }
-    function find(map, name) {
+    function find2(map, name) {
       name = name.toLowerCase();
       for (const key in map) {
         if (key.toLowerCase() === name) {
@@ -2145,7 +2145,7 @@ var require_lib = __commonJS({
       get(name) {
         name = `${name}`;
         validateName(name);
-        const key = find(this[MAP], name);
+        const key = find2(this[MAP], name);
         if (key === void 0) {
           return null;
         }
@@ -2168,7 +2168,7 @@ var require_lib = __commonJS({
         value = `${value}`;
         validateName(name);
         validateValue(value);
-        const key = find(this[MAP], name);
+        const key = find2(this[MAP], name);
         this[MAP][key !== void 0 ? key : name] = [value];
       }
       append(name, value) {
@@ -2176,7 +2176,7 @@ var require_lib = __commonJS({
         value = `${value}`;
         validateName(name);
         validateValue(value);
-        const key = find(this[MAP], name);
+        const key = find2(this[MAP], name);
         if (key !== void 0) {
           this[MAP][key].push(value);
         } else {
@@ -2186,12 +2186,12 @@ var require_lib = __commonJS({
       has(name) {
         name = `${name}`;
         validateName(name);
-        return find(this[MAP], name) !== void 0;
+        return find2(this[MAP], name) !== void 0;
       }
       delete(name) {
         name = `${name}`;
         validateName(name);
-        const key = find(this[MAP], name);
+        const key = find2(this[MAP], name);
         if (key !== void 0) {
           delete this[MAP][key];
         }
@@ -2278,7 +2278,7 @@ var require_lib = __commonJS({
     });
     function exportNodeCompatibleHeaders(headers) {
       const obj = Object.assign({ __proto__: null }, headers[MAP]);
-      const hostHeaderKey = find(headers[MAP], "Host");
+      const hostHeaderKey = find2(headers[MAP], "Host");
       if (hostHeaderKey !== void 0) {
         obj[hostHeaderKey] = obj[hostHeaderKey][0];
       }
@@ -7794,7 +7794,7 @@ var require_tool_cache = __commonJS({
         yield exec_1.exec(`"${unzipPath}"`, args, { cwd: dest });
       });
     }
-    function cacheDir(sourceDir, tool, version, arch) {
+    function cacheDir2(sourceDir, tool, version, arch) {
       return __awaiter(this, void 0, void 0, function* () {
         version = semver.clean(version) || version;
         arch = arch || os.arch();
@@ -7812,7 +7812,7 @@ var require_tool_cache = __commonJS({
         return destPath;
       });
     }
-    exports.cacheDir = cacheDir;
+    exports.cacheDir = cacheDir2;
     function cacheFile(sourceFile, targetFile, tool, version, arch) {
       return __awaiter(this, void 0, void 0, function* () {
         version = semver.clean(version) || version;
@@ -7831,7 +7831,7 @@ var require_tool_cache = __commonJS({
       });
     }
     exports.cacheFile = cacheFile;
-    function find(toolName, versionSpec, arch) {
+    function find2(toolName, versionSpec, arch) {
       if (!toolName) {
         throw new Error("toolName parameter is required");
       }
@@ -7858,7 +7858,7 @@ var require_tool_cache = __commonJS({
       }
       return toolPath;
     }
-    exports.find = find;
+    exports.find = find2;
     function findAllVersions(toolName, arch) {
       const versions = [];
       arch = arch || os.arch();
@@ -13694,14 +13694,21 @@ var XcutilsVersionResolver = class {
     await this.downloadBinaryPromise;
   }
   async createDownloadBinaryPromise() {
-    const version = "v0.2.2";
-    const zipURL = `https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`;
+    const version = "0.2.2";
+    const cachedXcutilsDirectory = toolsCache.find("xcutils", version);
+    if (cachedXcutilsDirectory !== "") {
+      core.debug(`Adding cached xcutils to path: ${cachedXcutilsDirectory}`);
+      core.addPath(cachedXcutilsDirectory);
+      return;
+    }
+    const zipURL = `https://github.com/JosephDuffy/xcutils/releases/download/v${version}/xcutils.zip`;
     core.debug(`Downloading xcutils archive from ${zipURL}`);
     const xcutilsZipPath = await toolsCache.downloadTool(zipURL);
     core.debug("Extracting xcutils zip to /usr/local/bin");
     const xcutilsFolder = await toolsCache.extractZip(xcutilsZipPath, "/usr/local/bin");
-    core.debug(`Adding xcutils to path: ${xcutilsFolder}`);
-    core.addPath(xcutilsFolder);
+    const cachedPath = await toolsCache.cacheDir(xcutilsFolder, "xcutils", version);
+    core.debug(`Adding xcutils to path: ${cachedPath}`);
+    core.addPath(cachedPath);
   }
 };
 var XcutilsVersionResolver_default = XcutilsVersionResolver;

@@ -76,8 +76,18 @@ export default class XcutilsVersionResolver implements VersionResolver {
   }
 
   private async createDownloadBinaryPromise(): Promise<void> {
-    const version = "v0.2.2"
-    const zipURL = `https://github.com/JosephDuffy/xcutils/releases/download/${version}/xcutils.zip`
+    const version = "0.2.2"
+
+    const cachedXcutilsDirectory = toolsCache.find("xcutils", version)
+
+    if (cachedXcutilsDirectory !== "") {
+      core.debug(`Adding cached xcutils to path: ${cachedXcutilsDirectory}`)
+
+      core.addPath(cachedXcutilsDirectory)
+      return
+    }
+
+    const zipURL = `https://github.com/JosephDuffy/xcutils/releases/download/v${version}/xcutils.zip`
 
     core.debug(`Downloading xcutils archive from ${zipURL}`)
 
@@ -90,8 +100,14 @@ export default class XcutilsVersionResolver implements VersionResolver {
       "/usr/local/bin"
     )
 
-    core.debug(`Adding xcutils to path: ${xcutilsFolder}`)
+    const cachedPath = await toolsCache.cacheDir(
+      xcutilsFolder,
+      "xcutils",
+      version
+    )
 
-    core.addPath(xcutilsFolder)
+    core.debug(`Adding xcutils to path: ${cachedPath}`)
+
+    core.addPath(cachedPath)
   }
 }
