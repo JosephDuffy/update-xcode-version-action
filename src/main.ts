@@ -128,7 +128,7 @@ export async function run(): Promise<void> {
             (await exec("git", [
               "diff",
               "--exit-code",
-              "branchName",
+              branchName,
               `origin/${branchName}`,
             ])) === 1
 
