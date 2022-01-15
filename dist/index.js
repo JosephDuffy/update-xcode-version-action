@@ -13917,7 +13917,7 @@ async function run() {
           ]);
           const contentsDiffer = await (0, import_exec2.exec)("git", ["diff", "--exit-code", `origin/${branchName}`], { ignoreReturnCode: true }) === 1;
           if (!contentsDiffer) {
-            core3.debug("Existing branch has matching content -- no need to update.");
+            core3.info("Existing branch has matching content -- no need to update.");
             return;
           }
         }

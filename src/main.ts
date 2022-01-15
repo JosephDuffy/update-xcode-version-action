@@ -138,7 +138,7 @@ export async function run(): Promise<void> {
             )) === 1
 
           if (!contentsDiffer) {
-            core.debug(
+            core.info(
               "Existing branch has matching content -- no need to update."
             )
             return
