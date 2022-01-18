@@ -13902,13 +13902,7 @@ async function run() {
         core3.debug("Staged all changes");
         await (0, import_exec2.exec)("git", ["commit", "-m", "Update Xcode Versions"]);
         core3.debug("Created commit");
-        const branchExists = await (0, import_exec2.exec)("git", [
-          "ls-remote",
-          "--exit-code",
-          "--heads",
-          "origin",
-          branchName
-        ]) === 0;
+        const branchExists = await (0, import_exec2.exec)("git", ["ls-remote", "--exit-code", "--heads", "origin", branchName], { ignoreReturnCode: true }) === 0;
         if (branchExists) {
           await (0, import_exec2.exec)("git", [
             "fetch",

@@ -115,13 +115,11 @@ export async function run(): Promise<void> {
         core.debug("Created commit")
 
         const branchExists =
-          (await exec("git", [
-            "ls-remote",
-            "--exit-code",
-            "--heads",
-            "origin",
-            branchName,
-          ])) === 0
+          (await exec(
+            "git",
+            ["ls-remote", "--exit-code", "--heads", "origin", branchName],
+            { ignoreReturnCode: true }
+          )) === 0
 
         if (branchExists) {
           await exec("git", [
