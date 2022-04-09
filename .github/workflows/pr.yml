@@ -13,14 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Read .node-version
-        run: echo "##[set-output name=node-version;]$(cat .node-version)"
-        id: node-version
-
       - name: Install node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: "${{ steps.node-version.outputs.node-version }}"
+          node-version-file: ".node-version"
 
       - name: Cache NPM
         uses: actions/cache@v2
@@ -43,14 +39,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Read .node-version
-        run: echo "##[set-output name=node-version;]$(cat .node-version)"
-        id: node-version
-
       - name: Install node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: "${{ steps.node-version.outputs.node-version }}"
+          node-version-file: ".node-version"
 
       - name: Cache NPM
         uses: actions/cache@v2
