@@ -5,6 +5,7 @@ import { exec } from "@actions/exec"
 import XcutilsVersionResolver from "./XcutilsVersionResolver"
 import applyXcodeVersionsFile from "./applyXcodeVersionsFile"
 import generateBadge from "./generateBadge"
+import addBadgeToMarkdownFile from "./addBadgeToMarkdownFile"
 
 export async function run(): Promise<void> {
   try {
@@ -68,6 +69,28 @@ export async function run(): Promise<void> {
           path.resolve(workspacePath, xcodeVersionBadgePath),
           xcodeVersionBadgeVersions,
           xcutilsVersionResolver
+        )
+      }
+    }
+
+    const xcodeVersionBadgeMarkdownFile = core.getInput(
+      "xcode-version-badge-markdown-file"
+    )
+
+    if (xcodeVersionBadgeMarkdownFile !== "") {
+      const xcodeVersionBadgeVersionsString = core.getInput(
+        "xcode-version-badge-versions"
+      )
+      const xcodeVersionBadgeVersions = xcodeVersionBadgeVersionsString
+        .split(",")
+        .map((s) => s.trim())
+
+      if (xcodeVersionBadgeVersions.length > 0) {
+        await addBadgeToMarkdownFile(
+          xcodeVersionBadgeVersions,
+          xcutilsVersionResolver,
+          xcodeVersionBadgeMarkdownFile,
+          workspacePath
         )
       }
     }
