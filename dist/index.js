@@ -145,7 +145,7 @@ var require_file_command = __commonJS({
       return result;
     };
     Object.defineProperty(exports, "__esModule", { value: true });
-    var fs4 = __importStar(require("fs"));
+    var fs5 = __importStar(require("fs"));
     var os = __importStar(require("os"));
     var utils_1 = require_utils();
     function issueCommand(command, message) {
@@ -153,10 +153,10 @@ var require_file_command = __commonJS({
       if (!filePath) {
         throw new Error(`Unable to find environment variable for file command ${command}`);
       }
-      if (!fs4.existsSync(filePath)) {
+      if (!fs5.existsSync(filePath)) {
         throw new Error(`Missing file at path: ${filePath}`);
       }
-      fs4.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
+      fs5.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
         encoding: "utf8"
       });
     }
@@ -170,11 +170,11 @@ var require_core = __commonJS({
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve4) {
+          resolve4(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve4, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -190,7 +190,7 @@ var require_core = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve4(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -212,7 +212,7 @@ var require_core = __commonJS({
     var file_command_1 = require_file_command();
     var utils_1 = require_utils();
     var os = __importStar(require("os"));
-    var path4 = __importStar(require("path"));
+    var path5 = __importStar(require("path"));
     var ExitCode;
     (function(ExitCode2) {
       ExitCode2[ExitCode2["Success"] = 0] = "Success";
@@ -242,7 +242,7 @@ var require_core = __commonJS({
       } else {
         command_1.issueCommand("add-path", {}, inputPath);
       }
-      process.env["PATH"] = `${inputPath}${path4.delimiter}${process.env["PATH"]}`;
+      process.env["PATH"] = `${inputPath}${path5.delimiter}${process.env["PATH"]}`;
     }
     exports.addPath = addPath2;
     function getInput2(name, options) {
@@ -335,8 +335,8 @@ var require_context = __commonJS({
           if (fs_1.existsSync(process.env.GITHUB_EVENT_PATH)) {
             this.payload = JSON.parse(fs_1.readFileSync(process.env.GITHUB_EVENT_PATH, { encoding: "utf8" }));
           } else {
-            const path4 = process.env.GITHUB_EVENT_PATH;
-            process.stdout.write(`GITHUB_EVENT_PATH ${path4} does not exist${os_1.EOL}`);
+            const path5 = process.env.GITHUB_EVENT_PATH;
+            process.stdout.write(`GITHUB_EVENT_PATH ${path5} does not exist${os_1.EOL}`);
           }
         }
         this.eventName = process.env.GITHUB_EVENT_NAME;
@@ -740,13 +740,13 @@ var require_http_client = __commonJS({
         this.message = message;
       }
       readBody() {
-        return new Promise(async (resolve3, reject) => {
+        return new Promise(async (resolve4, reject) => {
           let output = Buffer.alloc(0);
           this.message.on("data", (chunk) => {
             output = Buffer.concat([output, chunk]);
           });
           this.message.on("end", () => {
-            resolve3(output.toString());
+            resolve4(output.toString());
           });
         });
       }
@@ -910,12 +910,12 @@ var require_http_client = __commonJS({
         this._disposed = true;
       }
       requestRaw(info2, data) {
-        return new Promise((resolve3, reject) => {
+        return new Promise((resolve4, reject) => {
           let callbackForResult = function(err, res) {
             if (err) {
               reject(err);
             }
-            resolve3(res);
+            resolve4(res);
           };
           this.requestRawWithCallback(info2, data, callbackForResult);
         });
@@ -1062,7 +1062,7 @@ var require_http_client = __commonJS({
       _performExponentialBackoff(retryNumber) {
         retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
         const ms = ExponentialBackoffTimeSlice * Math.pow(2, retryNumber);
-        return new Promise((resolve3) => setTimeout(() => resolve3(), ms));
+        return new Promise((resolve4) => setTimeout(() => resolve4(), ms));
       }
       static dateTimeDeserializer(key, value) {
         if (typeof value === "string") {
@@ -1074,7 +1074,7 @@ var require_http_client = __commonJS({
         return value;
       }
       async _processResponse(res, options) {
-        return new Promise(async (resolve3, reject) => {
+        return new Promise(async (resolve4, reject) => {
           const statusCode = res.message.statusCode;
           const response = {
             statusCode,
@@ -1082,7 +1082,7 @@ var require_http_client = __commonJS({
             headers: {}
           };
           if (statusCode == HttpCodes.NotFound) {
-            resolve3(response);
+            resolve4(response);
           }
           let obj;
           let contents;
@@ -1112,7 +1112,7 @@ var require_http_client = __commonJS({
             err.result = response.result;
             reject(err);
           } else {
-            resolve3(response);
+            resolve4(response);
           }
         });
       }
@@ -2396,14 +2396,14 @@ var require_url_state_machine = __commonJS({
       return url.replace(/\u0009|\u000A|\u000D/g, "");
     }
     function shortenPath(url) {
-      const path4 = url.path;
-      if (path4.length === 0) {
+      const path5 = url.path;
+      if (path5.length === 0) {
         return;
       }
-      if (url.scheme === "file" && path4.length === 1 && isNormalizedWindowsDriveLetter(path4[0])) {
+      if (url.scheme === "file" && path5.length === 1 && isNormalizedWindowsDriveLetter(path5[0])) {
         return;
       }
-      path4.pop();
+      path5.pop();
     }
     function includesCredentials(url) {
       return url.username !== "" || url.password !== "";
@@ -3690,7 +3690,7 @@ var require_lib2 = __commonJS({
       let accum = [];
       let accumBytes = 0;
       let abort = false;
-      return new Body.Promise(function(resolve3, reject) {
+      return new Body.Promise(function(resolve4, reject) {
         let resTimeout;
         if (_this4.timeout) {
           resTimeout = setTimeout(function() {
@@ -3724,7 +3724,7 @@ var require_lib2 = __commonJS({
           }
           clearTimeout(resTimeout);
           try {
-            resolve3(Buffer.concat(accum, accumBytes));
+            resolve4(Buffer.concat(accum, accumBytes));
           } catch (err) {
             reject(new FetchError(`Could not create Buffer from response body for ${_this4.url}: ${err.message}`, "system", err));
           }
@@ -4318,7 +4318,7 @@ var require_lib2 = __commonJS({
         throw new Error("native promise missing, set fetch.Promise to your favorite alternative");
       }
       Body.Promise = fetch.Promise;
-      return new fetch.Promise(function(resolve3, reject) {
+      return new fetch.Promise(function(resolve4, reject) {
         const request = new Request(url, opts);
         const options = getNodeRequestOptions(request);
         const send = (options.protocol === "https:" ? https2 : http).request;
@@ -4430,7 +4430,7 @@ var require_lib2 = __commonJS({
                   requestOpts.body = void 0;
                   requestOpts.headers.delete("content-length");
                 }
-                resolve3(fetch(new Request(locationURL, requestOpts)));
+                resolve4(fetch(new Request(locationURL, requestOpts)));
                 finalize();
                 return;
             }
@@ -4452,7 +4452,7 @@ var require_lib2 = __commonJS({
           const codings = headers.get("Content-Encoding");
           if (!request.compress || request.method === "HEAD" || codings === null || res.statusCode === 204 || res.statusCode === 304) {
             response = new Response(body, response_options);
-            resolve3(response);
+            resolve4(response);
             return;
           }
           const zlibOptions = {
@@ -4462,7 +4462,7 @@ var require_lib2 = __commonJS({
           if (codings == "gzip" || codings == "x-gzip") {
             body = body.pipe(zlib.createGunzip(zlibOptions));
             response = new Response(body, response_options);
-            resolve3(response);
+            resolve4(response);
             return;
           }
           if (codings == "deflate" || codings == "x-deflate") {
@@ -4474,18 +4474,18 @@ var require_lib2 = __commonJS({
                 body = body.pipe(zlib.createInflateRaw());
               }
               response = new Response(body, response_options);
-              resolve3(response);
+              resolve4(response);
             });
             return;
           }
           if (codings == "br" && typeof zlib.createBrotliDecompress === "function") {
             body = body.pipe(zlib.createBrotliDecompress());
             response = new Response(body, response_options);
-            resolve3(response);
+            resolve4(response);
             return;
           }
           response = new Response(body, response_options);
-          resolve3(response);
+          resolve4(response);
         });
         writeToStream(req, request);
       });
@@ -6457,11 +6457,11 @@ var require_io_util = __commonJS({
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve4) {
+          resolve4(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve4, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -6477,7 +6477,7 @@ var require_io_util = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve4(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -6485,9 +6485,9 @@ var require_io_util = __commonJS({
     var _a;
     Object.defineProperty(exports, "__esModule", { value: true });
     var assert_1 = require("assert");
-    var fs4 = require("fs");
-    var path4 = require("path");
-    _a = fs4.promises, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
+    var fs5 = require("fs");
+    var path5 = require("path");
+    _a = fs5.promises, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
     exports.IS_WINDOWS = process.platform === "win32";
     function exists(fsPath) {
       return __awaiter(this, void 0, void 0, function* () {
@@ -6524,7 +6524,7 @@ var require_io_util = __commonJS({
     function mkdirP(fsPath, maxDepth = 1e3, depth = 1) {
       return __awaiter(this, void 0, void 0, function* () {
         assert_1.ok(fsPath, "a path argument must be provided");
-        fsPath = path4.resolve(fsPath);
+        fsPath = path5.resolve(fsPath);
         if (depth >= maxDepth)
           return exports.mkdir(fsPath);
         try {
@@ -6533,7 +6533,7 @@ var require_io_util = __commonJS({
         } catch (err) {
           switch (err.code) {
             case "ENOENT": {
-              yield mkdirP(path4.dirname(fsPath), maxDepth, depth + 1);
+              yield mkdirP(path5.dirname(fsPath), maxDepth, depth + 1);
               yield exports.mkdir(fsPath);
               return;
             }
@@ -6564,7 +6564,7 @@ var require_io_util = __commonJS({
         }
         if (stats && stats.isFile()) {
           if (exports.IS_WINDOWS) {
-            const upperExt = path4.extname(filePath).toUpperCase();
+            const upperExt = path5.extname(filePath).toUpperCase();
             if (extensions.some((validExt) => validExt.toUpperCase() === upperExt)) {
               return filePath;
             }
@@ -6588,11 +6588,11 @@ var require_io_util = __commonJS({
           if (stats && stats.isFile()) {
             if (exports.IS_WINDOWS) {
               try {
-                const directory = path4.dirname(filePath);
-                const upperName = path4.basename(filePath).toUpperCase();
+                const directory = path5.dirname(filePath);
+                const upperName = path5.basename(filePath).toUpperCase();
                 for (const actualName of yield exports.readdir(directory)) {
                   if (upperName === actualName.toUpperCase()) {
-                    filePath = path4.join(directory, actualName);
+                    filePath = path5.join(directory, actualName);
                     break;
                   }
                 }
@@ -6631,11 +6631,11 @@ var require_io = __commonJS({
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve4) {
+          resolve4(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve4, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -6651,14 +6651,14 @@ var require_io = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve4(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     var childProcess = require("child_process");
-    var path4 = require("path");
+    var path5 = require("path");
     var util_1 = require("util");
     var ioUtil = require_io_util();
     var exec4 = util_1.promisify(childProcess.exec);
@@ -6669,7 +6669,7 @@ var require_io = __commonJS({
         if (destStat && destStat.isFile() && !force) {
           return;
         }
-        const newDest = destStat && destStat.isDirectory() ? path4.join(dest, path4.basename(source)) : dest;
+        const newDest = destStat && destStat.isDirectory() ? path5.join(dest, path5.basename(source)) : dest;
         if (!(yield ioUtil.exists(source))) {
           throw new Error(`no such file or directory: ${source}`);
         }
@@ -6681,7 +6681,7 @@ var require_io = __commonJS({
             yield cpDirRecursive(source, newDest, 0, force);
           }
         } else {
-          if (path4.relative(source, newDest) === "") {
+          if (path5.relative(source, newDest) === "") {
             throw new Error(`'${newDest}' and '${source}' are the same file`);
           }
           yield copyFile(source, newDest, force);
@@ -6694,7 +6694,7 @@ var require_io = __commonJS({
         if (yield ioUtil.exists(dest)) {
           let destExists = true;
           if (yield ioUtil.isDirectory(dest)) {
-            dest = path4.join(dest, path4.basename(source));
+            dest = path5.join(dest, path5.basename(source));
             destExists = yield ioUtil.exists(dest);
           }
           if (destExists) {
@@ -6705,7 +6705,7 @@ var require_io = __commonJS({
             }
           }
         }
-        yield mkdirP(path4.dirname(dest));
+        yield mkdirP(path5.dirname(dest));
         yield ioUtil.rename(source, dest);
       });
     }
@@ -6771,7 +6771,7 @@ var require_io = __commonJS({
         try {
           const extensions = [];
           if (ioUtil.IS_WINDOWS && process.env.PATHEXT) {
-            for (const extension of process.env.PATHEXT.split(path4.delimiter)) {
+            for (const extension of process.env.PATHEXT.split(path5.delimiter)) {
               if (extension) {
                 extensions.push(extension);
               }
@@ -6789,14 +6789,14 @@ var require_io = __commonJS({
           }
           const directories = [];
           if (process.env.PATH) {
-            for (const p of process.env.PATH.split(path4.delimiter)) {
+            for (const p of process.env.PATH.split(path5.delimiter)) {
               if (p) {
                 directories.push(p);
               }
             }
           }
           for (const directory of directories) {
-            const filePath = yield ioUtil.tryGetExecutablePath(directory + path4.sep + tool, extensions);
+            const filePath = yield ioUtil.tryGetExecutablePath(directory + path5.sep + tool, extensions);
             if (filePath) {
               return filePath;
             }
@@ -6861,11 +6861,11 @@ var require_toolrunner = __commonJS({
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve4) {
+          resolve4(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve4, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -6881,7 +6881,7 @@ var require_toolrunner = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve4(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -6902,7 +6902,7 @@ var require_toolrunner = __commonJS({
     var os = __importStar(require("os"));
     var events = __importStar(require("events"));
     var child = __importStar(require("child_process"));
-    var path4 = __importStar(require("path"));
+    var path5 = __importStar(require("path"));
     var io = __importStar(require_io());
     var ioUtil = __importStar(require_io_util());
     var IS_WINDOWS = process.platform === "win32";
@@ -7106,10 +7106,10 @@ var require_toolrunner = __commonJS({
       exec() {
         return __awaiter(this, void 0, void 0, function* () {
           if (!ioUtil.isRooted(this.toolPath) && (this.toolPath.includes("/") || IS_WINDOWS && this.toolPath.includes("\\"))) {
-            this.toolPath = path4.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
+            this.toolPath = path5.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
           }
           this.toolPath = yield io.which(this.toolPath, true);
-          return new Promise((resolve3, reject) => {
+          return new Promise((resolve4, reject) => {
             this._debug(`exec tool: ${this.toolPath}`);
             this._debug("arguments:");
             for (const arg of this.args) {
@@ -7189,7 +7189,7 @@ var require_toolrunner = __commonJS({
               if (error3) {
                 reject(error3);
               } else {
-                resolve3(exitCode);
+                resolve4(exitCode);
               }
             });
             if (this.options.input) {
@@ -7319,11 +7319,11 @@ var require_exec = __commonJS({
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve4) {
+          resolve4(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve4, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -7339,7 +7339,7 @@ var require_exec = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve4(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -8507,11 +8507,11 @@ var require_manifest = __commonJS({
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve4) {
+          resolve4(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve4, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -8527,7 +8527,7 @@ var require_manifest = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve4(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -8549,7 +8549,7 @@ var require_manifest = __commonJS({
     var core_1 = require_core();
     var os = require("os");
     var cp = require("child_process");
-    var fs4 = require("fs");
+    var fs5 = require("fs");
     function _findMatch(versionSpec, stable, candidates, archFilter) {
       return __awaiter(this, void 0, void 0, function* () {
         const platFilter = os.platform();
@@ -8612,8 +8612,8 @@ var require_manifest = __commonJS({
     function _readLinuxVersionFile() {
       const lsbFile = "/etc/lsb-release";
       let contents = "";
-      if (fs4.existsSync(lsbFile)) {
-        contents = fs4.readFileSync(lsbFile).toString();
+      if (fs5.existsSync(lsbFile)) {
+        contents = fs5.readFileSync(lsbFile).toString();
       }
       return contents;
     }
@@ -8750,13 +8750,13 @@ var require_http_client2 = __commonJS({
         this.message = message;
       }
       readBody() {
-        return new Promise(async (resolve3, reject) => {
+        return new Promise(async (resolve4, reject) => {
           let output = Buffer.alloc(0);
           this.message.on("data", (chunk) => {
             output = Buffer.concat([output, chunk]);
           });
           this.message.on("end", () => {
-            resolve3(output.toString());
+            resolve4(output.toString());
           });
         });
       }
@@ -8920,12 +8920,12 @@ var require_http_client2 = __commonJS({
         this._disposed = true;
       }
       requestRaw(info2, data) {
-        return new Promise((resolve3, reject) => {
+        return new Promise((resolve4, reject) => {
           let callbackForResult = function(err, res) {
             if (err) {
               reject(err);
             }
-            resolve3(res);
+            resolve4(res);
           };
           this.requestRawWithCallback(info2, data, callbackForResult);
         });
@@ -9071,7 +9071,7 @@ var require_http_client2 = __commonJS({
       _performExponentialBackoff(retryNumber) {
         retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
         const ms = ExponentialBackoffTimeSlice * Math.pow(2, retryNumber);
-        return new Promise((resolve3) => setTimeout(() => resolve3(), ms));
+        return new Promise((resolve4) => setTimeout(() => resolve4(), ms));
       }
       static dateTimeDeserializer(key, value) {
         if (typeof value === "string") {
@@ -9083,7 +9083,7 @@ var require_http_client2 = __commonJS({
         return value;
       }
       async _processResponse(res, options) {
-        return new Promise(async (resolve3, reject) => {
+        return new Promise(async (resolve4, reject) => {
           const statusCode = res.message.statusCode;
           const response = {
             statusCode,
@@ -9091,7 +9091,7 @@ var require_http_client2 = __commonJS({
             headers: {}
           };
           if (statusCode == HttpCodes.NotFound) {
-            resolve3(response);
+            resolve4(response);
           }
           let obj;
           let contents;
@@ -9124,7 +9124,7 @@ var require_http_client2 = __commonJS({
             }
             reject(err);
           } else {
-            resolve3(response);
+            resolve4(response);
           }
         });
       }
@@ -9212,11 +9212,11 @@ var require_retry_helper = __commonJS({
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve4) {
+          resolve4(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve4, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -9232,7 +9232,7 @@ var require_retry_helper = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve4(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -9288,7 +9288,7 @@ var require_retry_helper = __commonJS({
       }
       sleep(seconds) {
         return __awaiter(this, void 0, void 0, function* () {
-          return new Promise((resolve3) => setTimeout(resolve3, seconds * 1e3));
+          return new Promise((resolve4) => setTimeout(resolve4, seconds * 1e3));
         });
       }
     };
@@ -9302,11 +9302,11 @@ var require_tool_cache = __commonJS({
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
-        return value instanceof P ? value : new P(function(resolve3) {
-          resolve3(value);
+        return value instanceof P ? value : new P(function(resolve4) {
+          resolve4(value);
         });
       }
-      return new (P || (P = Promise))(function(resolve3, reject) {
+      return new (P || (P = Promise))(function(resolve4, reject) {
         function fulfilled(value) {
           try {
             step(generator.next(value));
@@ -9322,7 +9322,7 @@ var require_tool_cache = __commonJS({
           }
         }
         function step(result) {
-          result.done ? resolve3(result.value) : adopt(result.value).then(fulfilled, rejected);
+          result.done ? resolve4(result.value) : adopt(result.value).then(fulfilled, rejected);
         }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
@@ -9345,10 +9345,10 @@ var require_tool_cache = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     var core4 = __importStar(require_core());
     var io = __importStar(require_io());
-    var fs4 = __importStar(require("fs"));
+    var fs5 = __importStar(require("fs"));
     var mm = __importStar(require_manifest());
     var os = __importStar(require("os"));
-    var path4 = __importStar(require("path"));
+    var path5 = __importStar(require("path"));
     var httpm = __importStar(require_http_client2());
     var semver = __importStar(require_semver());
     var stream = __importStar(require("stream"));
@@ -9370,8 +9370,8 @@ var require_tool_cache = __commonJS({
     var userAgent = "actions/tool-cache";
     function downloadTool2(url, dest, auth) {
       return __awaiter(this, void 0, void 0, function* () {
-        dest = dest || path4.join(_getTempDirectory(), v4_1.default());
-        yield io.mkdirP(path4.dirname(dest));
+        dest = dest || path5.join(_getTempDirectory(), v4_1.default());
+        yield io.mkdirP(path5.dirname(dest));
         core4.debug(`Downloading ${url}`);
         core4.debug(`Destination ${dest}`);
         const maxAttempts = 3;
@@ -9393,7 +9393,7 @@ var require_tool_cache = __commonJS({
     exports.downloadTool = downloadTool2;
     function downloadToolAttempt(url, dest, auth) {
       return __awaiter(this, void 0, void 0, function* () {
-        if (fs4.existsSync(dest)) {
+        if (fs5.existsSync(dest)) {
           throw new Error(`Destination file path ${dest} already exists`);
         }
         const http = new httpm.HttpClient(userAgent, [], {
@@ -9417,7 +9417,7 @@ var require_tool_cache = __commonJS({
         const readStream = responseMessageFactory();
         let succeeded = false;
         try {
-          yield pipeline(readStream, fs4.createWriteStream(dest));
+          yield pipeline(readStream, fs5.createWriteStream(dest));
           core4.debug("download complete");
           succeeded = true;
           return dest;
@@ -9458,7 +9458,7 @@ var require_tool_cache = __commonJS({
             process.chdir(originalCwd);
           }
         } else {
-          const escapedScript = path4.join(__dirname, "..", "scripts", "Invoke-7zdec.ps1").replace(/'/g, "''").replace(/"|\n|\r/g, "");
+          const escapedScript = path5.join(__dirname, "..", "scripts", "Invoke-7zdec.ps1").replace(/'/g, "''").replace(/"|\n|\r/g, "");
           const escapedFile = file.replace(/'/g, "''").replace(/"|\n|\r/g, "");
           const escapedTarget = dest.replace(/'/g, "''").replace(/"|\n|\r/g, "");
           const command = `& '${escapedScript}' -Source '${escapedFile}' -Target '${escapedTarget}'`;
@@ -9600,12 +9600,12 @@ var require_tool_cache = __commonJS({
         arch = arch || os.arch();
         core4.debug(`Caching tool ${tool} ${version} ${arch}`);
         core4.debug(`source dir: ${sourceDir}`);
-        if (!fs4.statSync(sourceDir).isDirectory()) {
+        if (!fs5.statSync(sourceDir).isDirectory()) {
           throw new Error("sourceDir is not a directory");
         }
         const destPath = yield _createToolPath(tool, version, arch);
-        for (const itemName of fs4.readdirSync(sourceDir)) {
-          const s = path4.join(sourceDir, itemName);
+        for (const itemName of fs5.readdirSync(sourceDir)) {
+          const s = path5.join(sourceDir, itemName);
           yield io.cp(s, destPath, { recursive: true });
         }
         _completeToolPath(tool, version, arch);
@@ -9619,11 +9619,11 @@ var require_tool_cache = __commonJS({
         arch = arch || os.arch();
         core4.debug(`Caching tool ${tool} ${version} ${arch}`);
         core4.debug(`source file: ${sourceFile}`);
-        if (!fs4.statSync(sourceFile).isFile()) {
+        if (!fs5.statSync(sourceFile).isFile()) {
           throw new Error("sourceFile is not a file");
         }
         const destFolder = yield _createToolPath(tool, version, arch);
-        const destPath = path4.join(destFolder, targetFile);
+        const destPath = path5.join(destFolder, targetFile);
         core4.debug(`destination file ${destPath}`);
         yield io.cp(sourceFile, destPath);
         _completeToolPath(tool, version, arch);
@@ -9647,9 +9647,9 @@ var require_tool_cache = __commonJS({
       let toolPath = "";
       if (versionSpec) {
         versionSpec = semver.clean(versionSpec) || "";
-        const cachePath = path4.join(_getCacheDirectory(), toolName, versionSpec, arch);
+        const cachePath = path5.join(_getCacheDirectory(), toolName, versionSpec, arch);
         core4.debug(`checking cache: ${cachePath}`);
-        if (fs4.existsSync(cachePath) && fs4.existsSync(`${cachePath}.complete`)) {
+        if (fs5.existsSync(cachePath) && fs5.existsSync(`${cachePath}.complete`)) {
           core4.debug(`Found tool in cache ${toolName} ${versionSpec} ${arch}`);
           toolPath = cachePath;
         } else {
@@ -9662,13 +9662,13 @@ var require_tool_cache = __commonJS({
     function findAllVersions(toolName, arch) {
       const versions = [];
       arch = arch || os.arch();
-      const toolPath = path4.join(_getCacheDirectory(), toolName);
-      if (fs4.existsSync(toolPath)) {
-        const children = fs4.readdirSync(toolPath);
+      const toolPath = path5.join(_getCacheDirectory(), toolName);
+      if (fs5.existsSync(toolPath)) {
+        const children = fs5.readdirSync(toolPath);
         for (const child of children) {
           if (_isExplicitVersion(child)) {
-            const fullPath = path4.join(toolPath, child, arch || "");
-            if (fs4.existsSync(fullPath) && fs4.existsSync(`${fullPath}.complete`)) {
+            const fullPath = path5.join(toolPath, child, arch || "");
+            if (fs5.existsSync(fullPath) && fs5.existsSync(`${fullPath}.complete`)) {
               versions.push(child);
             }
           }
@@ -9722,7 +9722,7 @@ var require_tool_cache = __commonJS({
     function _createExtractFolder(dest) {
       return __awaiter(this, void 0, void 0, function* () {
         if (!dest) {
-          dest = path4.join(_getTempDirectory(), v4_1.default());
+          dest = path5.join(_getTempDirectory(), v4_1.default());
         }
         yield io.mkdirP(dest);
         return dest;
@@ -9730,7 +9730,7 @@ var require_tool_cache = __commonJS({
     }
     function _createToolPath(tool, version, arch) {
       return __awaiter(this, void 0, void 0, function* () {
-        const folderPath = path4.join(_getCacheDirectory(), tool, semver.clean(version) || version, arch || "");
+        const folderPath = path5.join(_getCacheDirectory(), tool, semver.clean(version) || version, arch || "");
         core4.debug(`destination ${folderPath}`);
         const markerPath = `${folderPath}.complete`;
         yield io.rmRF(folderPath);
@@ -9740,9 +9740,9 @@ var require_tool_cache = __commonJS({
       });
     }
     function _completeToolPath(tool, version, arch) {
-      const folderPath = path4.join(_getCacheDirectory(), tool, semver.clean(version) || version, arch || "");
+      const folderPath = path5.join(_getCacheDirectory(), tool, semver.clean(version) || version, arch || "");
       const markerPath = `${folderPath}.complete`;
-      fs4.writeFileSync(markerPath, "");
+      fs5.writeFileSync(markerPath, "");
       core4.debug("finished caching tool");
     }
     function _isExplicitVersion(versionSpec) {
@@ -11945,10 +11945,10 @@ ${indent}${str}`;
         return String(this.value);
       }
     };
-    function collectionFromPath(schema, path4, value) {
+    function collectionFromPath(schema, path5, value) {
       let v = value;
-      for (let i = path4.length - 1; i >= 0; --i) {
-        const k = path4[i];
+      for (let i = path5.length - 1; i >= 0; --i) {
+        const k = path5[i];
         if (Number.isInteger(k) && k >= 0) {
           const a = [];
           a[k] = v;
@@ -11966,18 +11966,18 @@ ${indent}${str}`;
       }
       return schema.createNode(v, false);
     }
-    var isEmptyPath = (path4) => path4 == null || typeof path4 === "object" && path4[Symbol.iterator]().next().done;
+    var isEmptyPath = (path5) => path5 == null || typeof path5 === "object" && path5[Symbol.iterator]().next().done;
     var Collection = class extends Node {
       constructor(schema) {
         super();
         PlainValue._defineProperty(this, "items", []);
         this.schema = schema;
       }
-      addIn(path4, value) {
-        if (isEmptyPath(path4))
+      addIn(path5, value) {
+        if (isEmptyPath(path5))
           this.add(value);
         else {
-          const [key, ...rest] = path4;
+          const [key, ...rest] = path5;
           const node = this.get(key, true);
           if (node instanceof Collection)
             node.addIn(rest, value);
@@ -12586,12 +12586,12 @@ ${ctx.indent}`;
       for (const {
         format,
         test,
-        resolve: resolve3
+        resolve: resolve4
       } of tags) {
         if (test) {
           const match = str.match(test);
           if (match) {
-            let res = resolve3.apply(null, match);
+            let res = resolve4.apply(null, match);
             if (!(res instanceof Scalar))
               res = new Scalar(res);
             if (format)
@@ -14180,8 +14180,8 @@ ${pair.comment}` : item.comment;
     }
     function warnFileDeprecation(filename) {
       if (shouldWarn(true)) {
-        const path4 = filename.replace(/.*yaml[/\\]/i, "").replace(/\.js$/, "").replace(/\\/g, "/");
-        warn(`The endpoint 'yaml/${path4}' will be removed in a future release.`, "DeprecationWarning");
+        const path5 = filename.replace(/.*yaml[/\\]/i, "").replace(/\.js$/, "").replace(/\\/g, "/");
+        warn(`The endpoint 'yaml/${path5}' will be removed in a future release.`, "DeprecationWarning");
       }
     }
     var warned = {};
@@ -15119,23 +15119,23 @@ ${cbNode.commentBefore}` : cb;
         assertCollection(this.contents);
         return this.contents.add(value);
       }
-      addIn(path4, value) {
+      addIn(path5, value) {
         assertCollection(this.contents);
-        this.contents.addIn(path4, value);
+        this.contents.addIn(path5, value);
       }
       delete(key) {
         assertCollection(this.contents);
         return this.contents.delete(key);
       }
-      deleteIn(path4) {
-        if (resolveSeq.isEmptyPath(path4)) {
+      deleteIn(path5) {
+        if (resolveSeq.isEmptyPath(path5)) {
           if (this.contents == null)
             return false;
           this.contents = null;
           return true;
         }
         assertCollection(this.contents);
-        return this.contents.deleteIn(path4);
+        return this.contents.deleteIn(path5);
       }
       getDefaults() {
         return Document.defaults[this.version] || Document.defaults[this.options.version] || {};
@@ -15143,29 +15143,29 @@ ${cbNode.commentBefore}` : cb;
       get(key, keepScalar) {
         return this.contents instanceof resolveSeq.Collection ? this.contents.get(key, keepScalar) : void 0;
       }
-      getIn(path4, keepScalar) {
-        if (resolveSeq.isEmptyPath(path4))
+      getIn(path5, keepScalar) {
+        if (resolveSeq.isEmptyPath(path5))
           return !keepScalar && this.contents instanceof resolveSeq.Scalar ? this.contents.value : this.contents;
-        return this.contents instanceof resolveSeq.Collection ? this.contents.getIn(path4, keepScalar) : void 0;
+        return this.contents instanceof resolveSeq.Collection ? this.contents.getIn(path5, keepScalar) : void 0;
       }
       has(key) {
         return this.contents instanceof resolveSeq.Collection ? this.contents.has(key) : false;
       }
-      hasIn(path4) {
-        if (resolveSeq.isEmptyPath(path4))
+      hasIn(path5) {
+        if (resolveSeq.isEmptyPath(path5))
           return this.contents !== void 0;
-        return this.contents instanceof resolveSeq.Collection ? this.contents.hasIn(path4) : false;
+        return this.contents instanceof resolveSeq.Collection ? this.contents.hasIn(path5) : false;
       }
       set(key, value) {
         assertCollection(this.contents);
         this.contents.set(key, value);
       }
-      setIn(path4, value) {
-        if (resolveSeq.isEmptyPath(path4))
+      setIn(path5, value) {
+        if (resolveSeq.isEmptyPath(path5))
           this.contents = value;
         else {
           assertCollection(this.contents);
-          this.contents.setIn(path4, value);
+          this.contents.setIn(path5, value);
         }
       }
       setSchema(id, customTags) {
@@ -15434,7 +15434,7 @@ __export(exports, {
   run: () => run
 });
 var core3 = __toModule(require_core());
-var path3 = __toModule(require("path"));
+var path4 = __toModule(require("path"));
 var github = __toModule(require_github());
 var import_exec2 = __toModule(require_exec());
 
@@ -15462,14 +15462,14 @@ var XcutilsVersionResolver = class {
     }
     const version = versions[0];
     core.debug(`Resolved ${versionSpecifier} to ${JSON.stringify(version)}`);
-    const path4 = version.path;
-    const xcodeSplit = path4.split("/Xcode_");
+    const path5 = version.path;
+    const xcodeSplit = path5.split("/Xcode_");
     if (xcodeSplit.length < 2) {
-      throw Error(`Path does not contain "Xcode_": ${path4}`);
+      throw Error(`Path does not contain "Xcode_": ${path5}`);
     }
     const appSplit = xcodeSplit[1].split(".app");
     if (appSplit.length < 2) {
-      throw Error(`Path does not contain ".app": ${path4}`);
+      throw Error(`Path does not contain ".app": ${path5}`);
     }
     return appSplit[0];
   }
@@ -15554,13 +15554,13 @@ async function applyXcodeVersionsToWorkflowFiles(workflows, rootPath, versionRes
   }
 }
 function execute(params, input) {
-  return new Promise((resolve3, reject) => {
+  return new Promise((resolve4, reject) => {
     core2.debug(`Spawning process: ${params.join(" ")}`);
     const child = (0, import_child_process.exec)(params.join(" "), (error3, stdout) => {
       if (error3) {
         reject(error3);
       } else {
-        resolve3(stdout);
+        resolve4(stdout);
       }
     });
     if (input && child.stdin) {
@@ -15623,23 +15623,39 @@ function applyXcodeVersionsFile(xcodeVersionsFilePath, versionResolver, quotes) 
 // src/generateBadge.ts
 var fs3 = __toModule(require("fs"));
 var import_https = __toModule(require("https"));
-function generateBadge(badgePath, versions, versionResolver) {
-  return new Promise((resolve3, reject) => {
-    const resolvedVersionPromises = versions.map((v) => versionResolver.resolveVersion(v));
-    Promise.all(resolvedVersionPromises).then((resolvedVersions) => {
-      const displayResolvedVersions = encodeURI(resolvedVersions.filter((v) => v !== void 0).join(" | "));
-      const badgeURL = `https://img.shields.io/badge/Xcode-${displayResolvedVersions}-success`;
-      import_https.default.get(badgeURL, (response) => {
-        const badgeWriteStream = fs3.createWriteStream(badgePath);
-        response.pipe(badgeWriteStream);
-        resolve3();
-      }).on("error", (error3) => {
-        reject(error3);
-      });
-    }).catch((error3) => {
+
+// src/getBadgeURL.ts
+async function getBadgeURL(versions, versionResolver) {
+  const resolvedVersionPromises = versions.map((v) => versionResolver.resolveVersion(v));
+  const resolvedVersions = await Promise.all(resolvedVersionPromises);
+  const displayResolvedVersions = encodeURI(resolvedVersions.filter((v) => v !== void 0).join(" | "));
+  return `https://img.shields.io/badge/Xcode-${displayResolvedVersions}-success`;
+}
+
+// src/generateBadge.ts
+async function generateBadge(badgePath, versions, versionResolver) {
+  const badgeURL = await getBadgeURL(versions, versionResolver);
+  return new Promise((resolve4, reject) => {
+    import_https.default.get(badgeURL, (response) => {
+      const badgeWriteStream = fs3.createWriteStream(badgePath);
+      response.pipe(badgeWriteStream);
+      resolve4();
+    }).on("error", (error3) => {
       reject(error3);
     });
   });
+}
+
+// src/addBadgeToMarkdownFile.ts
+var path3 = __toModule(require("path"));
+var fs4 = __toModule(require("fs"));
+async function addBadgeToMarkdownFile(versions, versionResolver, markdownPath, rootPath) {
+  const badgeURL = await getBadgeURL(versions, versionResolver);
+  const markdownFileURL = path3.resolve(rootPath, markdownPath);
+  let markdown = fs4.readFileSync(markdownFileURL).toString("utf8");
+  const searchString = "<!---xcode-version-badge-markdown-->";
+  markdown = markdown.replace(/^.*<!---xcode-version-badge-markdown-->.*$/gm, `![Supported Xcode Versions](${badgeURL})${searchString}`);
+  fs4.writeFileSync(markdownFileURL, markdown, "utf8");
 }
 
 // src/main.ts
@@ -15661,9 +15677,9 @@ async function run() {
       core3.error("Quotes can only be 'single' or 'double'");
       return;
     }
-    const xcodeSearchPath = path3.resolve(workspacePath, xcodeSearchPathInput.length > 0 ? xcodeSearchPathInput : "/Applications");
+    const xcodeSearchPath = path4.resolve(workspacePath, xcodeSearchPathInput.length > 0 ? xcodeSearchPathInput : "/Applications");
     core3.debug(`Resolved Xcode search path "${xcodeSearchPathInput}" against workspace "${workspacePath}": "${xcodeSearchPath}`);
-    const xcodeVersionsFilePath = path3.resolve(workspacePath, xcodeVersionsFile);
+    const xcodeVersionsFilePath = path4.resolve(workspacePath, xcodeVersionsFile);
     const xcutilsVersionResolver = new XcutilsVersionResolver_default(xcodeSearchPath);
     await applyXcodeVersionsFile(xcodeVersionsFilePath, xcutilsVersionResolver, quotes);
     const xcodeVersionBadgePath = core3.getInput("xcode-version-badge-path");
@@ -15671,7 +15687,15 @@ async function run() {
       const xcodeVersionBadgeVersionsString = core3.getInput("xcode-version-badge-versions");
       const xcodeVersionBadgeVersions = xcodeVersionBadgeVersionsString.split(",").map((s) => s.trim());
       if (xcodeVersionBadgeVersions.length > 0) {
-        await generateBadge(path3.resolve(workspacePath, xcodeVersionBadgePath), xcodeVersionBadgeVersions, xcutilsVersionResolver);
+        await generateBadge(path4.resolve(workspacePath, xcodeVersionBadgePath), xcodeVersionBadgeVersions, xcutilsVersionResolver);
+      }
+    }
+    const xcodeVersionBadgeMarkdownFile = core3.getInput("xcode-version-badge-markdown-file");
+    if (xcodeVersionBadgeMarkdownFile !== "") {
+      const xcodeVersionBadgeVersionsString = core3.getInput("xcode-version-badge-versions");
+      const xcodeVersionBadgeVersions = xcodeVersionBadgeVersionsString.split(",").map((s) => s.trim());
+      if (xcodeVersionBadgeVersions.length > 0) {
+        await addBadgeToMarkdownFile(xcodeVersionBadgeVersions, xcutilsVersionResolver, xcodeVersionBadgeMarkdownFile, workspacePath);
       }
     }
     const githubToken = core3.getInput("github-token");

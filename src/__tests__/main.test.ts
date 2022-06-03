@@ -46,6 +46,8 @@ test("valid inputs and environment", async () => {
           return "/Users/tester/Applications"
         case "xcode-version-badge-path":
           return ""
+        case "xcode-version-badge-markdown-file":
+          return ""
         case "quotes":
           return "double"
         default:
@@ -70,9 +72,9 @@ test("valid inputs and environment", async () => {
   })
   expect(mockedGetInput).toBeCalledWith("xcode-search-path")
   expect(mockedGetInput).toBeCalledWith("xcode-version-badge-path")
+  expect(mockedGetInput).toBeCalledWith("xcode-version-badge-markdown-file")
   expect(mockedGetInput).toBeCalledWith("github-token")
   expect(mockedGetInput).toBeCalledWith("quotes")
-  expect(mockedGetInput).toBeCalledTimes(5)
 })
 
 test("no xcode-search-path", async () => {
@@ -88,6 +90,8 @@ test("no xcode-search-path", async () => {
         case "xcode-search-path":
           return ""
         case "xcode-version-badge-path":
+          return ""
+        case "xcode-version-badge-markdown-file":
           return ""
         case "quotes":
           return "double"
@@ -111,9 +115,9 @@ test("no xcode-search-path", async () => {
   })
   expect(mockedGetInput).toBeCalledWith("xcode-search-path")
   expect(mockedGetInput).toBeCalledWith("xcode-version-badge-path")
+  expect(mockedGetInput).toBeCalledWith("xcode-version-badge-markdown-file")
   expect(mockedGetInput).toBeCalledWith("github-token")
   expect(mockedGetInput).toBeCalledWith("quotes")
-  expect(mockedGetInput).toBeCalledTimes(5)
 })
 
 test("missing GITHUB_WORKSPACE environment variable", async () => {
