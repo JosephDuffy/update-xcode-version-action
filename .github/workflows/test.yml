@@ -100,6 +100,7 @@ jobs:
           xcode-versions-file: ./src/__tests__/xcode-versions.yml
           xcode-search-path: ./src/__tests__/Xcodes
           xcode-version-badge-versions: "last-major, latest,beta"
+          xcode-version-badge-markdown-file: ./src/__tests__/input.md
           xcode-version-badge-path: ./.github/xcode-versions-badge.svg
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -107,6 +108,10 @@ jobs:
         continue-on-error: true
         run: |
           if ! diff ./src/__tests__/workflows/input.yml ./src/__tests__/workflows/output-double-quotes.yml; then
+            exit 1
+          fi
+
+          if ! diff ./src/__tests__/input.md ./src/__tests__/output.md; then
             exit 1
           fi
 
